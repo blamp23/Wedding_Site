@@ -24,13 +24,25 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const missingVars = ["GOOGLE_SERVICE_ACCOUNT_EMAIL", "GOOGLE_PRIVATE_KEY", "GOOGLE_SHEET_ID"].filter(
+      (v) => !process.env[v]
+    );
+    if (missingVars.length > 0) {
+      console.error("RSVP: missing env vars:", missingVars.join(", "));
+      return NextResponse.json(
+        { error: `Server misconfiguration: missing ${missingVars.join(", ")}. Contact the site owner.` },
+        { status: 500 }
+      );
+    }
+
     await appendRsvpRow({ name, attending, dietary: dietary ?? "", plusOne: plusOne ?? "" });
 
     return NextResponse.json({ success: true });
   } catch (err) {
-    console.error("RSVP error:", err);
+    const message = err instanceof Error ? err.message : String(err);
+    console.error("RSVP error:", message);
     return NextResponse.json(
-      { error: "Something went wrong. Please try again or contact us directly." },
+      { error: `Something went wrong: ${message}` },
       { status: 500 }
     );
   }
