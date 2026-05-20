@@ -4,7 +4,14 @@ import { useState, useMemo, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import guestList from "@/data/guests.json";
 
-type Status = "idle" | "submitting" | "success" | "error";
+type Status = "idle" | "submitting" | "success" | "error" | "alreadyRsvped";
+
+type ExistingRsvp = {
+  attending: string;
+  dietary: string;
+  plusOne: string;
+  notes: string;
+};
 
 export default function RSVP() {
   const [query, setQuery] = useState("");
@@ -13,8 +20,10 @@ export default function RSVP() {
   const [attending, setAttending] = useState<"yes" | "no" | "">("");
   const [dietary, setDietary] = useState("");
   const [plusOne, setPlusOne] = useState("");
+  const [notes, setNotes] = useState("");
   const [status, setStatus] = useState<Status>("idle");
   const [errorMsg, setErrorMsg] = useState("");
+  const [existingRsvp, setExistingRsvp] = useState<ExistingRsvp | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const guests = guestList as string[];
@@ -25,7 +34,6 @@ export default function RSVP() {
     return guests.filter((g) => g.toLowerCase().includes(q)).slice(0, 8);
   }, [query, guests]);
 
-  // Close dropdown on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
@@ -48,14 +56,23 @@ export default function RSVP() {
     setAttending("");
     setDietary("");
     setPlusOne("");
+    setNotes("");
     setStatus("idle");
     setErrorMsg("");
+    setExistingRsvp(null);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedName || !attending) return;
+  const prefillFromExisting = (existing: ExistingRsvp) => {
+    setAttending(existing.attending === "yes" ? "yes" : existing.attending === "no" ? "no" : "");
+    setDietary(existing.dietary === "—" ? "" : existing.dietary);
+    setPlusOne(existing.plusOne === "—" ? "" : existing.plusOne);
+    setNotes(existing.notes === "—" ? "" : existing.notes);
+    setExistingRsvp(null);
+    setStatus("idle");
+  };
 
+  const submit = async (overwrite = false) => {
+    if (!selectedName || !attending) return;
     setStatus("submitting");
     setErrorMsg("");
 
@@ -63,10 +80,21 @@ export default function RSVP() {
       const res = await fetch("/api/rsvp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: selectedName, attending, dietary, plusOne }),
+        body: JSON.stringify({
+          name: selectedName,
+          attending,
+          dietary,
+          plusOne,
+          notes,
+          overwrite: overwrite ? "true" : "false",
+        }),
       });
       const data = await res.json();
-      if (!res.ok) {
+
+      if (data.alreadyRsvped) {
+        setExistingRsvp(data.existing);
+        setStatus("alreadyRsvped");
+      } else if (!res.ok) {
         setErrorMsg(data.error ?? "Something went wrong.");
         setStatus("error");
       } else {
@@ -76,6 +104,11 @@ export default function RSVP() {
       setErrorMsg("Network error. Please try again.");
       setStatus("error");
     }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    submit(false);
   };
 
   return (
@@ -98,7 +131,7 @@ export default function RSVP() {
         </motion.div>
 
         <AnimatePresence mode="wait">
-          {status === "success" ? (
+          {status === "success" && (
             <motion.div
               key="success"
               initial={{ opacity: 0, scale: 0.95 }}
@@ -119,7 +152,51 @@ export default function RSVP() {
                 Submit another RSVP
               </button>
             </motion.div>
-          ) : (
+          )}
+
+          {status === "alreadyRsvped" && existingRsvp && (
+            <motion.div
+              key="duplicate"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0 }}
+              className="border border-green-accent/30 bg-green-DEFAULT/30 p-8 text-center space-y-5"
+            >
+              <p className="font-sans text-xs tracking-widest uppercase text-green-light">Heads up</p>
+              <h3 className="font-serif text-2xl text-cream font-light">
+                It looks like you&apos;ve already RSVP&apos;d!
+              </h3>
+              <div className="text-left space-y-2 border-t border-green-accent/20 pt-5">
+                <Row label="Attending" value={existingRsvp.attending === "yes" ? "Joyfully accepts" : "Regretfully declines"} />
+                {existingRsvp.dietary && existingRsvp.dietary !== "—" && (
+                  <Row label="Dietary" value={existingRsvp.dietary} />
+                )}
+                {existingRsvp.plusOne && existingRsvp.plusOne !== "—" && (
+                  <Row label="Plus one" value={existingRsvp.plusOne} />
+                )}
+                {existingRsvp.notes && existingRsvp.notes !== "—" && (
+                  <Row label="Notes" value={existingRsvp.notes} />
+                )}
+              </div>
+              <p className="font-sans text-cream/60 text-sm">Would you like to update your response?</p>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => prefillFromExisting(existingRsvp)}
+                  className="flex-1 btn-primary bg-cream text-green-deep hover:bg-cream-secondary"
+                >
+                  Update my RSVP
+                </button>
+                <button
+                  onClick={reset}
+                  className="flex-1 btn-outline border-green-accent/40 text-cream/60 hover:text-cream hover:border-cream"
+                >
+                  Keep as is
+                </button>
+              </div>
+            </motion.div>
+          )}
+
+          {(status === "idle" || status === "submitting" || status === "error") && (
             <motion.form
               key="form"
               initial={{ opacity: 0 }}
@@ -188,7 +265,7 @@ export default function RSVP() {
                 </motion.div>
               )}
 
-              {/* Dietary + Plus One */}
+              {/* Dietary + Plus One + Notes */}
               {selectedName && attending === "yes" && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className="space-y-6">
                   <div>
@@ -211,6 +288,20 @@ export default function RSVP() {
                       className="w-full bg-transparent border-b border-green-accent/50 focus:border-cream py-3 font-sans text-cream placeholder:text-cream/30 outline-none transition-colors"
                     />
                   </div>
+                </motion.div>
+              )}
+
+              {/* Notes — always visible once name is selected */}
+              {selectedName && (
+                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
+                  <Label text="Notes (optional)" />
+                  <textarea
+                    value={notes}
+                    placeholder="Any message for Benji & Mary-Kate…"
+                    rows={3}
+                    onChange={(e) => setNotes(e.target.value)}
+                    className="w-full bg-transparent border-b border-green-accent/50 focus:border-cream py-3 font-sans text-cream placeholder:text-cream/30 outline-none transition-colors resize-none"
+                  />
                 </motion.div>
               )}
 
@@ -244,5 +335,14 @@ function Label({ text }: { text: string }) {
     <span className="block font-sans text-xs tracking-widest uppercase text-green-light mb-1">
       {text}
     </span>
+  );
+}
+
+function Row({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex gap-4">
+      <span className="font-sans text-xs tracking-widest uppercase text-green-light w-20 shrink-0 pt-0.5">{label}</span>
+      <span className="font-sans text-cream/80 text-sm">{value}</span>
+    </div>
   );
 }
