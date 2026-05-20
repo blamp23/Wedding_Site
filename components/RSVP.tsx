@@ -24,6 +24,7 @@ export default function RSVP() {
   const [status, setStatus] = useState<Status>("idle");
   const [errorMsg, setErrorMsg] = useState("");
   const [existingRsvp, setExistingRsvp] = useState<ExistingRsvp | null>(null);
+  const [isUpdating, setIsUpdating] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const guests = guestList as string[];
@@ -60,6 +61,7 @@ export default function RSVP() {
     setStatus("idle");
     setErrorMsg("");
     setExistingRsvp(null);
+    setIsUpdating(false);
   };
 
   const prefillFromExisting = (existing: ExistingRsvp) => {
@@ -68,6 +70,7 @@ export default function RSVP() {
     setPlusOne(existing.plusOne === "—" ? "" : existing.plusOne);
     setNotes(existing.notes === "—" ? "" : existing.notes);
     setExistingRsvp(null);
+    setIsUpdating(true);
     setStatus("idle");
   };
 
@@ -108,7 +111,7 @@ export default function RSVP() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    submit(false);
+    submit(isUpdating);
   };
 
   return (
