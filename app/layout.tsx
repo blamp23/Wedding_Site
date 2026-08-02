@@ -2,11 +2,13 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Benji & Mary-Kate | Engagement Party",
-  description: "Join us in celebrating the engagement of Benji Lamp and Mary-Kate Mitchell.",
+  title: "Benji & Mary-Kate | Save the Date",
+  description:
+    "Benji Lamp & Mary-Kate Mitchell are getting married June 5, 2027 at Anthony Chapel, Garvan Woodland Gardens, Hot Springs, Arkansas. Formal invitation to follow.",
   openGraph: {
-    title: "Benji & Mary-Kate | Engagement Party",
-    description: "Join us in celebrating our engagement. RSVP for our July party.",
+    title: "Benji & Mary-Kate | Save the Date",
+    description:
+      "We're getting married June 5, 2027 in Hot Springs, Arkansas. Formal invitation to follow.",
     type: "website",
   },
 };

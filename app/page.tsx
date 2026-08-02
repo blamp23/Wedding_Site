@@ -1,27 +1,13 @@
-import Navigation from "@/components/Navigation";
-import Hero from "@/components/Hero";
-import CountdownTimer from "@/components/CountdownTimer";
-import OurStory from "@/components/OurStory";
-import Gallery from "@/components/Gallery";
-import Venue from "@/components/Venue";
-import RSVP from "@/components/RSVP";
-import Registry from "@/components/Registry";
-import Footer from "@/components/Footer";
+import SaveTheDate from "@/components/SaveTheDate";
 
+// Save-the-date phase: single landing screen.
+// The full-site components (Navigation, Hero, CountdownTimer, OurStory, Gallery,
+// Venue, RSVP, Registry) remain in /components and can be re-added here once the
+// formal invitation phase begins.
 export default function Home() {
   return (
-    <>
-      <Navigation />
-      <main>
-        <Hero />
-        <CountdownTimer />
-        <OurStory />
-        <Gallery />
-        <Venue />
-        <RSVP />
-        <Registry />
-      </main>
-      <Footer />
-    </>
+    <main>
+      <SaveTheDate />
+    </main>
   );
 }

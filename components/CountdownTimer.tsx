@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 
-// July 12, 2026 — update this to the actual party date/time
-const PARTY_DATE = new Date("2026-07-12T18:00:00");
+// Wedding day — June 5, 2027 at Anthony Chapel, Hot Springs, AR
+const PARTY_DATE = new Date("2027-06-05T16:00:00");
 
 function getTimeLeft() {
   const diff = PARTY_DATE.getTime() - Date.now();

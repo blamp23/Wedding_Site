@@ -11,7 +11,7 @@
   }
 
   body {
-    @apply bg-cream font-sans text-green-deep;
+    @apply bg-paper font-sans text-ink;
   }
 
   h1, h2, h3, h4, h5 {

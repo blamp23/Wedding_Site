@@ -8,6 +8,17 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        // Save-the-date palette: black & white, mostly white
+        paper: {
+          DEFAULT: "#FFFFFF",
+          soft: "#F6F5F2",
+        },
+        ink: {
+          DEFAULT: "#141414",
+          soft: "#5A5A5A",
+          faint: "#BDBDBD",
+        },
+        // Legacy engagement-party tokens (kept for hidden components)
         cream: {
           DEFAULT: "#F8F5EE",
           secondary: "#EDE8DC",
