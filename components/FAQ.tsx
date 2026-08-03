@@ -11,7 +11,7 @@ const faqs: { q: string; a: string }[] = [
   },
   {
     q: "Is the ceremony indoors or outdoors?",
-    a: "The ceremony is held inside Anthony Chapel — a glass chapel set among the trees at Garvan Woodland Gardens. Cocktails and the dinner reception follow on site.", // TODO: confirm reception location
+    a: "The ceremony is held inside Anthony Chapel — a glass chapel set among the trees at Garvan Woodland Gardens. Cocktails and the dinner reception follow at the Hamp Williams Building in downtown Hot Springs.",
   },
   {
     q: "Can I bring a guest or plus-one?",
