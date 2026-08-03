@@ -58,7 +58,7 @@ export default function SaveTheDate() {
       </motion.p>
 
       <div className="relative inline-block">
-        <Laurel className="pointer-events-none absolute left-1/2 top-1/2 w-[320px] sm:w-[380px] -translate-x-1/2 -translate-y-1/2 text-ink/[0.07]" />
+        <Laurel className="pointer-events-none absolute left-1/2 top-1/2 w-[380px] sm:w-[460px] -translate-x-1/2 -translate-y-1/2 text-ink/[0.12]" />
         <motion.h1
           custom={1}
           initial="hidden"

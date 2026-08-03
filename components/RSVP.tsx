@@ -2,24 +2,28 @@
 
 import { useState, useMemo, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import guestList from "@/data/guests.json";
+import { households, findHousehold, type Household } from "@/data/guests";
 
 type Status = "idle" | "submitting" | "success" | "error" | "alreadyRsvped";
 
 type ExistingRsvp = {
-  attending: string;
+  members: { name: string; attending: string }[];
   dietary: string;
   plusOne: string;
   notes: string;
 };
 
+const allNames = households.flatMap((h) => h.members);
+
 export default function RSVP() {
   const [query, setQuery] = useState("");
-  const [selectedName, setSelectedName] = useState<string | null>(null);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [attending, setAttending] = useState<"yes" | "no" | "">("");
+  const [primaryName, setPrimaryName] = useState<string | null>(null);
+  const [household, setHousehold] = useState<Household | null>(null);
+  const [attendance, setAttendance] = useState<Record<string, boolean>>({});
+  const [bringPlusOne, setBringPlusOne] = useState(false);
+  const [plusOneName, setPlusOneName] = useState("");
   const [dietary, setDietary] = useState("");
-  const [plusOne, setPlusOne] = useState("");
   const [notes, setNotes] = useState("");
   const [status, setStatus] = useState<Status>("idle");
   const [errorMsg, setErrorMsg] = useState("");
@@ -27,13 +31,11 @@ export default function RSVP() {
   const [isUpdating, setIsUpdating] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const guests = guestList as string[];
-
   const filtered = useMemo(() => {
     if (!query || query.length < 2) return [];
     const q = query.toLowerCase();
-    return guests.filter((g) => g.toLowerCase().includes(q)).slice(0, 8);
-  }, [query, guests]);
+    return allNames.filter((n) => n.toLowerCase().includes(q)).slice(0, 8);
+  }, [query]);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -46,17 +48,24 @@ export default function RSVP() {
   }, []);
 
   const selectGuest = (name: string) => {
-    setSelectedName(name);
+    const h = findHousehold(name);
+    if (!h) return;
+    setPrimaryName(name);
+    setHousehold(h);
+    // Default everyone to attending; guests uncheck those who can't make it.
+    setAttendance(Object.fromEntries(h.members.map((m) => [m, true])));
     setQuery(name);
     setShowDropdown(false);
   };
 
   const reset = () => {
     setQuery("");
-    setSelectedName(null);
-    setAttending("");
+    setPrimaryName(null);
+    setHousehold(null);
+    setAttendance({});
+    setBringPlusOne(false);
+    setPlusOneName("");
     setDietary("");
-    setPlusOne("");
     setNotes("");
     setStatus("idle");
     setErrorMsg("");
@@ -65,17 +74,20 @@ export default function RSVP() {
   };
 
   const prefillFromExisting = (existing: ExistingRsvp) => {
-    setAttending(existing.attending === "yes" ? "yes" : existing.attending === "no" ? "no" : "");
-    setDietary(existing.dietary === "—" ? "" : existing.dietary);
-    setPlusOne(existing.plusOne === "—" ? "" : existing.plusOne);
-    setNotes(existing.notes === "—" ? "" : existing.notes);
+    setAttendance(
+      Object.fromEntries(existing.members.map((m) => [m.name, m.attending === "yes"]))
+    );
+    setDietary(existing.dietary);
+    setNotes(existing.notes);
+    setPlusOneName(existing.plusOne);
+    setBringPlusOne(Boolean(existing.plusOne));
     setExistingRsvp(null);
     setIsUpdating(true);
     setStatus("idle");
   };
 
   const submit = async (overwrite = false) => {
-    if (!selectedName || !attending) return;
+    if (!household || !primaryName) return;
     setStatus("submitting");
     setErrorMsg("");
 
@@ -84,10 +96,14 @@ export default function RSVP() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name: selectedName,
-          attending,
+          householdId: household.id,
+          primaryName,
+          members: household.members.map((name) => ({
+            name,
+            attending: attendance[name] ? "yes" : "no",
+          })),
+          plusOne: household.allowPlusOne && bringPlusOne ? plusOneName : "",
           dietary,
-          plusOne,
           notes,
           overwrite: overwrite ? "true" : "false",
         }),
@@ -114,6 +130,8 @@ export default function RSVP() {
     submit(isUpdating);
   };
 
+  const anyAttending = household?.members.some((m) => attendance[m]) ?? false;
+
   return (
     <section id="rsvp" className="py-24 bg-ink">
       <div className="max-w-2xl mx-auto px-6">
@@ -129,7 +147,7 @@ export default function RSVP() {
           <div className="w-16 h-px bg-paper/40 mx-auto my-6" />
           <p className="font-sans text-paper/70 text-sm leading-relaxed">
             Please RSVP by <strong className="text-paper">May 5, 2027</strong>.<br />
-            Begin typing your name to find yourself on the guest list.
+            Begin typing your name to find your party.
           </p>
         </motion.div>
 
@@ -167,19 +185,18 @@ export default function RSVP() {
             >
               <p className="font-sans text-xs tracking-widest uppercase text-paper/50">Heads up</p>
               <h3 className="font-serif text-2xl text-paper font-light">
-                It looks like you&apos;ve already RSVP&apos;d!
+                Your party has already RSVP&apos;d!
               </h3>
               <div className="text-left space-y-2 border-t border-paper/15 pt-5">
-                <Row label="Attending" value={existingRsvp.attending === "yes" ? "Joyfully accepts" : "Regretfully declines"} />
-                {existingRsvp.dietary && existingRsvp.dietary !== "—" && (
-                  <Row label="Dietary" value={existingRsvp.dietary} />
-                )}
-                {existingRsvp.plusOne && existingRsvp.plusOne !== "—" && (
-                  <Row label="Plus one" value={existingRsvp.plusOne} />
-                )}
-                {existingRsvp.notes && existingRsvp.notes !== "—" && (
-                  <Row label="Notes" value={existingRsvp.notes} />
-                )}
+                {existingRsvp.members.map((m) => (
+                  <Row
+                    key={m.name}
+                    label={m.name}
+                    value={m.attending === "yes" ? "Attending" : m.attending === "no" ? "Not attending" : "—"}
+                  />
+                ))}
+                {existingRsvp.plusOne && <Row label="Plus one" value={existingRsvp.plusOne} />}
+                {existingRsvp.dietary && <Row label="Dietary" value={existingRsvp.dietary} />}
               </div>
               <p className="font-sans text-paper/60 text-sm">Would you like to update your response?</p>
               <div className="flex gap-3">
@@ -187,7 +204,7 @@ export default function RSVP() {
                   onClick={() => prefillFromExisting(existingRsvp)}
                   className="flex-1 btn-primary bg-paper text-ink hover:bg-paper-soft"
                 >
-                  Update my RSVP
+                  Update our RSVP
                 </button>
                 <button
                   onClick={reset}
@@ -218,10 +235,11 @@ export default function RSVP() {
                   autoComplete="off"
                   onChange={(e) => {
                     setQuery(e.target.value);
-                    setSelectedName(null);
+                    setPrimaryName(null);
+                    setHousehold(null);
                     setShowDropdown(true);
                   }}
-                  onFocus={() => query.length >= 2 && setShowDropdown(true)}
+                  onFocus={() => query.length >= 2 && !household && setShowDropdown(true)}
                   className="w-full bg-transparent border-b border-paper/30 focus:border-paper py-3 font-sans text-paper placeholder:text-paper/30 outline-none transition-colors"
                 />
                 {showDropdown && filtered.length > 0 && (
@@ -238,64 +256,80 @@ export default function RSVP() {
                     ))}
                   </div>
                 )}
-                {query.length >= 2 && !selectedName && filtered.length === 0 && (
+                {query.length >= 2 && !household && filtered.length === 0 && (
                   <p className="mt-2 font-sans text-xs text-red-300">
                     No match found. Please contact us if you believe this is an error.
                   </p>
                 )}
               </div>
 
-              {/* Attending */}
-              {selectedName && (
+              {/* Household members — who's coming */}
+              {household && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
-                  <Label text="Will you attend?" />
-                  <div className="flex gap-4 mt-3">
-                    {(["yes", "no"] as const).map((v) => (
-                      <button
-                        key={v}
-                        type="button"
-                        onClick={() => setAttending(v)}
-                        className={`flex-1 py-3 font-sans text-xs tracking-widest uppercase border transition-colors ${
-                          attending === v
-                            ? "bg-paper text-ink border-paper"
-                            : "bg-transparent text-paper/60 border-paper/30 hover:border-paper/60 hover:text-paper"
-                        }`}
+                  <Label text="Who's coming?" />
+                  <div className="mt-2 divide-y divide-paper/10 border-y border-paper/10">
+                    {household.members.map((name) => (
+                      <label
+                        key={name}
+                        className="flex items-center justify-between gap-4 py-3.5 cursor-pointer select-none"
                       >
-                        {v === "yes" ? "Joyfully accepts" : "Regretfully declines"}
-                      </button>
+                        <span className="font-sans text-paper">{name}</span>
+                        <input
+                          type="checkbox"
+                          checked={attendance[name] ?? false}
+                          onChange={(e) =>
+                            setAttendance((a) => ({ ...a, [name]: e.target.checked }))
+                          }
+                          className="h-5 w-5 accent-paper cursor-pointer"
+                        />
+                      </label>
                     ))}
                   </div>
+                  <p className="mt-2 font-sans text-xs text-paper/40">
+                    Check everyone who will attend; leave unchecked for those who can&apos;t make it.
+                  </p>
                 </motion.div>
               )}
 
-              {/* Dietary + Plus One */}
-              {selectedName && attending === "yes" && (
-                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className="space-y-6">
-                  <div>
-                    <Label text="Dietary Restrictions (optional)" />
+              {/* Plus-one — only when the invitation allows one */}
+              {household?.allowPlusOne && (
+                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className="space-y-3">
+                  <label className="flex items-center gap-3 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={bringPlusOne}
+                      onChange={(e) => setBringPlusOne(e.target.checked)}
+                      className="h-5 w-5 accent-paper cursor-pointer"
+                    />
+                    <span className="font-sans text-sm text-paper/80">I&apos;ll bring a guest</span>
+                  </label>
+                  {bringPlusOne && (
                     <input
                       type="text"
-                      value={dietary}
-                      placeholder="e.g. Vegetarian, gluten-free…"
-                      onChange={(e) => setDietary(e.target.value)}
+                      value={plusOneName}
+                      placeholder="Guest's name"
+                      onChange={(e) => setPlusOneName(e.target.value)}
                       className="w-full bg-transparent border-b border-paper/30 focus:border-paper py-3 font-sans text-paper placeholder:text-paper/30 outline-none transition-colors"
                     />
-                  </div>
-                  <div>
-                    <Label text="Plus One Name (optional)" />
-                    <input
-                      type="text"
-                      value={plusOne}
-                      placeholder="Guest name, if applicable"
-                      onChange={(e) => setPlusOne(e.target.value)}
-                      className="w-full bg-transparent border-b border-paper/30 focus:border-paper py-3 font-sans text-paper placeholder:text-paper/30 outline-none transition-colors"
-                    />
-                  </div>
+                  )}
                 </motion.div>
               )}
 
-              {/* Notes — always visible once name is selected */}
-              {selectedName && (
+              {/* Dietary + notes (party-level) */}
+              {household && anyAttending && (
+                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
+                  <Label text="Dietary Restrictions (optional)" />
+                  <input
+                    type="text"
+                    value={dietary}
+                    placeholder="Anyone in your party — e.g. vegetarian, gluten-free…"
+                    onChange={(e) => setDietary(e.target.value)}
+                    className="w-full bg-transparent border-b border-paper/30 focus:border-paper py-3 font-sans text-paper placeholder:text-paper/30 outline-none transition-colors"
+                  />
+                </motion.div>
+              )}
+
+              {household && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
                   <Label text="Notes (optional)" />
                   <textarea
@@ -314,7 +348,7 @@ export default function RSVP() {
                 </p>
               )}
 
-              {selectedName && attending && (
+              {household && (
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }} className="pt-2">
                   <button
                     type="submit"
@@ -344,7 +378,7 @@ function Label({ text }: { text: string }) {
 function Row({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex gap-4">
-      <span className="font-sans text-xs tracking-widest uppercase text-paper/50 w-20 shrink-0 pt-0.5">{label}</span>
+      <span className="font-sans text-xs tracking-widest uppercase text-paper/50 w-28 shrink-0 pt-0.5">{label}</span>
       <span className="font-sans text-paper/80 text-sm">{value}</span>
     </div>
   );

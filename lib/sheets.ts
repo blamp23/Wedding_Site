@@ -1,6 +1,6 @@
 import { google } from "googleapis";
 
-type RsvpData = {
+export type RsvpData = {
   name: string;
   attending: string;
   dietary: string;
@@ -18,70 +18,66 @@ function getAuth() {
   });
 }
 
-export async function findExistingRsvp(
-  name: string
-): Promise<{ rowIndex: number; data: RsvpData } | null> {
-  const sheets = google.sheets({ version: "v4", auth: getAuth() });
+function sheetsClient() {
+  return google.sheets({ version: "v4", auth: getAuth() });
+}
 
+// Fetch all RSVP rows, keyed by lowercased name, so we can upsert per person.
+export async function getRsvpIndex(): Promise<
+  Map<string, { rowIndex: number; data: RsvpData }>
+> {
+  const sheets = sheetsClient();
   const res = await sheets.spreadsheets.values.get({
     spreadsheetId: process.env.GOOGLE_SHEET_ID,
     range: "RSVPs!A:F",
   });
 
   const rows = res.data.values ?? [];
+  const map = new Map<string, { rowIndex: number; data: RsvpData }>();
   for (let i = 0; i < rows.length; i++) {
-    if (rows[i][1]?.toLowerCase() === name.toLowerCase()) {
-      return {
-        rowIndex: i + 1, // 1-indexed sheet row
-        data: {
-          name: rows[i][1] ?? "",
-          attending: rows[i][2] ?? "",
-          dietary: rows[i][3] ?? "",
-          plusOne: rows[i][4] ?? "",
-          notes: rows[i][5] ?? "",
-        },
-      };
-    }
+    const name = rows[i][1];
+    if (!name) continue;
+    map.set(String(name).toLowerCase(), {
+      rowIndex: i + 1, // 1-indexed sheet row
+      data: {
+        name: rows[i][1] ?? "",
+        attending: rows[i][2] ?? "",
+        dietary: rows[i][3] ?? "",
+        plusOne: rows[i][4] ?? "",
+        notes: rows[i][5] ?? "",
+      },
+    });
   }
-  return null;
+  return map;
+}
+
+function rowValues(data: RsvpData) {
+  return [
+    new Date().toISOString(),
+    data.name,
+    data.attending,
+    data.dietary || "—",
+    data.plusOne || "—",
+    data.notes || "—",
+  ];
 }
 
 export async function appendRsvpRow(data: RsvpData) {
-  const sheets = google.sheets({ version: "v4", auth: getAuth() });
-
+  const sheets = sheetsClient();
   await sheets.spreadsheets.values.append({
     spreadsheetId: process.env.GOOGLE_SHEET_ID,
     range: "RSVPs!A:F",
     valueInputOption: "USER_ENTERED",
-    requestBody: {
-      values: [[
-        new Date().toISOString(),
-        data.name,
-        data.attending,
-        data.dietary || "—",
-        data.plusOne || "—",
-        data.notes || "—",
-      ]],
-    },
+    requestBody: { values: [rowValues(data)] },
   });
 }
 
 export async function updateRsvpRow(rowIndex: number, data: RsvpData) {
-  const sheets = google.sheets({ version: "v4", auth: getAuth() });
-
+  const sheets = sheetsClient();
   await sheets.spreadsheets.values.update({
     spreadsheetId: process.env.GOOGLE_SHEET_ID,
     range: `RSVPs!A${rowIndex}:F${rowIndex}`,
     valueInputOption: "USER_ENTERED",
-    requestBody: {
-      values: [[
-        new Date().toISOString(),
-        data.name,
-        data.attending,
-        data.dietary || "—",
-        data.plusOne || "—",
-        data.notes || "—",
-      ]],
-    },
+    requestBody: { values: [rowValues(data)] },
   });
 }

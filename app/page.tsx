@@ -3,7 +3,6 @@ import SaveTheDate from "@/components/SaveTheDate";
 import Slideshow from "@/components/Slideshow";
 
 const menu = [
-  { label: "Gallery", href: "/gallery" },
   { label: "Venue & Schedule", href: "/venue" },
   { label: "Accommodations", href: "/accommodations" },
   { label: "RSVP", href: "/rsvp" },
