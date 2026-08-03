@@ -46,97 +46,92 @@ export default function SaveTheDate() {
   ];
 
   return (
-    <section
-      id="top"
-      className="relative min-h-screen bg-paper text-ink flex items-center justify-center px-6 py-16 grain-overlay"
-    >
-      <div className="relative z-10 text-center max-w-2xl">
-        <motion.p
-          custom={0}
+    <div className="text-center md:text-left">
+      <motion.p
+        custom={0}
+        initial="hidden"
+        animate="show"
+        variants={fade}
+        className="font-sans text-[11px] sm:text-xs tracking-[0.4em] uppercase text-ink-soft mb-6"
+      >
+        Save the Date
+      </motion.p>
+
+      <div className="relative inline-block">
+        <Laurel className="pointer-events-none absolute left-1/2 top-1/2 w-[320px] sm:w-[380px] -translate-x-1/2 -translate-y-1/2 text-ink/[0.07]" />
+        <motion.h1
+          custom={1}
           initial="hidden"
           animate="show"
           variants={fade}
-          className="font-sans text-[11px] sm:text-xs tracking-[0.4em] uppercase text-ink-soft mb-8"
+          className="relative font-serif font-light text-ink"
+          style={{ fontSize: "clamp(2.5rem, 7vw, 5rem)", lineHeight: 1.05 }}
         >
-          Save the Date
-        </motion.p>
-
-        <div className="relative">
-          <Laurel className="pointer-events-none absolute left-1/2 top-1/2 w-[360px] sm:w-[460px] -translate-x-1/2 -translate-y-1/2 text-ink/[0.07]" />
-          <motion.h1
-            custom={1}
-            initial="hidden"
-            animate="show"
-            variants={fade}
-            className="relative font-serif font-light text-ink"
-            style={{ fontSize: "clamp(2.75rem, 9vw, 6rem)", lineHeight: 1.05 }}
-          >
-            Mary-Kate
-            <span className="block italic text-ink-soft" style={{ fontSize: "0.5em" }}>
-              &amp;
-            </span>
-            Benji
-          </motion.h1>
-        </div>
-
-        <motion.div
-          custom={2}
-          initial="hidden"
-          animate="show"
-          variants={fade}
-          className="mx-auto my-9 h-px w-16 bg-ink/30"
-        />
-
-        <motion.p
-          custom={2}
-          initial="hidden"
-          animate="show"
-          variants={fade}
-          className="font-serif text-2xl sm:text-3xl text-ink"
-        >
-          Saturday, June 5, 2027
-        </motion.p>
-
-        <motion.div
-          custom={3}
-          initial="hidden"
-          animate="show"
-          variants={fade}
-          className="mt-6 font-sans text-sm sm:text-base text-ink-soft leading-relaxed"
-        >
-          <p className="tracking-wide">Anthony Chapel at Garvan Woodland Gardens</p>
-          <p className="tracking-wide">Hot Springs, Arkansas</p>
-        </motion.div>
-
-        <motion.div
-          custom={4}
-          initial="hidden"
-          animate="show"
-          variants={fade}
-          className="mt-11 flex items-start justify-center gap-6 sm:gap-10"
-        >
-          {units.map(({ label, value }) => (
-            <div key={label} className="flex flex-col items-center">
-              <span className="font-serif text-3xl sm:text-4xl font-light text-ink tabular-nums">
-                {value === undefined ? "--" : String(value).padStart(2, "0")}
-              </span>
-              <span className="mt-2 font-sans text-[10px] tracking-[0.2em] uppercase text-ink-soft">
-                {label}
-              </span>
-            </div>
-          ))}
-        </motion.div>
-
-        <motion.p
-          custom={5}
-          initial="hidden"
-          animate="show"
-          variants={fade}
-          className="mt-12 font-sans text-[11px] tracking-[0.3em] uppercase text-ink-faint"
-        >
-          Formal invitation to follow
-        </motion.p>
+          Mary-Kate
+          <span className="block italic text-ink-soft" style={{ fontSize: "0.5em" }}>
+            &amp;
+          </span>
+          Benji
+        </motion.h1>
       </div>
-    </section>
+
+      <motion.div
+        custom={2}
+        initial="hidden"
+        animate="show"
+        variants={fade}
+        className="mx-auto md:mx-0 my-7 h-px w-16 bg-ink/30"
+      />
+
+      <motion.p
+        custom={2}
+        initial="hidden"
+        animate="show"
+        variants={fade}
+        className="font-serif text-2xl sm:text-3xl text-ink"
+      >
+        Saturday, June 5, 2027
+      </motion.p>
+
+      <motion.div
+        custom={3}
+        initial="hidden"
+        animate="show"
+        variants={fade}
+        className="mt-4 font-sans text-sm sm:text-base text-ink-soft leading-relaxed"
+      >
+        <p className="tracking-wide">Anthony Chapel at Garvan Woodland Gardens</p>
+        <p className="tracking-wide">Hot Springs, Arkansas</p>
+      </motion.div>
+
+      <motion.div
+        custom={4}
+        initial="hidden"
+        animate="show"
+        variants={fade}
+        className="mt-8 flex items-start justify-center md:justify-start gap-6 sm:gap-8"
+      >
+        {units.map(({ label, value }) => (
+          <div key={label} className="flex flex-col items-center">
+            <span className="font-serif text-2xl sm:text-3xl font-light text-ink tabular-nums">
+              {value === undefined ? "--" : String(value).padStart(2, "0")}
+            </span>
+            <span className="mt-1.5 font-sans text-[10px] tracking-[0.2em] uppercase text-ink-soft">
+              {label}
+            </span>
+          </div>
+        ))}
+      </motion.div>
+
+      <motion.p
+        custom={5}
+        initial="hidden"
+        animate="show"
+        variants={fade}
+        className="mt-10 font-sans text-[11px] tracking-[0.3em] uppercase text-ink-faint"
+      >
+        Formal invitation to follow
+      </motion.p>
+    </div>
   );
 }

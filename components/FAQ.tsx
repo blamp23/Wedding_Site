@@ -19,7 +19,7 @@ const faqs: { q: string; a: string }[] = [
   },
   {
     q: "Are children welcome?",
-    a: "We love your little ones! Please let us know in your RSVP so we can plan accordingly.", // TODO: confirm adults-only vs. kids welcome
+    a: "To allow all guests to relax and celebrate, our wedding is adults-only — unless your children are specifically named on your invitation. Thank you for understanding!",
   },
   {
     q: "Where should I stay?",
