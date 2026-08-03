@@ -300,7 +300,7 @@ export default function RSVP() {
                   <Label text="Notes (optional)" />
                   <textarea
                     value={notes}
-                    placeholder="Any message for Benji & Mary-Kate…"
+                    placeholder="Any message for Mary-Kate & Benji…"
                     rows={3}
                     onChange={(e) => setNotes(e.target.value)}
                     className="w-full bg-transparent border-b border-paper/30 focus:border-paper py-3 font-sans text-paper placeholder:text-paper/30 outline-none transition-colors resize-none"

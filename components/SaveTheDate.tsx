@@ -71,11 +71,11 @@ export default function SaveTheDate() {
           className="font-serif font-light text-ink"
           style={{ fontSize: "clamp(2.75rem, 9vw, 6rem)", lineHeight: 1.05 }}
         >
-          Benji
+          Mary-Kate
           <span className="block italic text-ink-soft" style={{ fontSize: "0.5em" }}>
             &amp;
           </span>
-          Mary-Kate
+          Benji
         </motion.h1>
 
         <motion.div

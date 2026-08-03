@@ -3,11 +3,11 @@ export default function Footer() {
     <footer className="bg-ink py-14 text-center">
       {/* Monogram */}
       <div className="w-16 h-16 mx-auto mb-6 rounded-full border border-paper/30 flex items-center justify-center">
-        <span className="font-serif text-xl text-paper font-light">B&amp;M</span>
+        <span className="font-serif text-xl text-paper font-light">M&amp;B</span>
       </div>
 
       <p className="font-serif text-2xl text-paper font-light mb-2">
-        Benji &amp; Mary-Kate
+        Mary-Kate &amp; Benji
       </p>
       <p className="font-sans text-xs tracking-widest uppercase text-paper/50 mb-8">
         June 5, 2027 · Hot Springs, Arkansas
@@ -29,7 +29,7 @@ export default function Footer() {
       </div>
 
       <p className="font-sans text-xs text-paper/30">
-        &copy; {new Date().getFullYear()} Benji Lamp &amp; Mary-Kate Mitchell
+        &copy; {new Date().getFullYear()} Mary-Kate Mitchell &amp; Benji Lamp
       </p>
     </footer>
   );

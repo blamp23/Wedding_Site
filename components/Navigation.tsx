@@ -28,7 +28,7 @@ export default function Navigation() {
     >
       <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
         <a href="#top" className="font-serif text-xl tracking-wide text-ink">
-          B &amp; MK
+          MK &amp; B
         </a>
 
         {/* Desktop links */}
