@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import Laurel from "@/components/Laurel";
 
 // Wedding day — June 5, 2027, 6:00 PM ceremony at Anthony Chapel, Hot Springs, AR
 const WEDDING_DATE = new Date("2027-06-05T18:00:00");
@@ -49,9 +50,6 @@ export default function SaveTheDate() {
       id="top"
       className="relative min-h-screen bg-paper text-ink flex items-center justify-center px-6 py-16 grain-overlay"
     >
-      {/* Thin framing border */}
-      <div className="pointer-events-none absolute inset-4 sm:inset-8 border border-ink/15" aria-hidden />
-
       <div className="relative z-10 text-center max-w-2xl">
         <motion.p
           custom={0}
@@ -63,20 +61,23 @@ export default function SaveTheDate() {
           Save the Date
         </motion.p>
 
-        <motion.h1
-          custom={1}
-          initial="hidden"
-          animate="show"
-          variants={fade}
-          className="font-serif font-light text-ink"
-          style={{ fontSize: "clamp(2.75rem, 9vw, 6rem)", lineHeight: 1.05 }}
-        >
-          Mary-Kate
-          <span className="block italic text-ink-soft" style={{ fontSize: "0.5em" }}>
-            &amp;
-          </span>
-          Benji
-        </motion.h1>
+        <div className="relative">
+          <Laurel className="pointer-events-none absolute left-1/2 top-1/2 w-[360px] sm:w-[460px] -translate-x-1/2 -translate-y-1/2 text-ink/[0.07]" />
+          <motion.h1
+            custom={1}
+            initial="hidden"
+            animate="show"
+            variants={fade}
+            className="relative font-serif font-light text-ink"
+            style={{ fontSize: "clamp(2.75rem, 9vw, 6rem)", lineHeight: 1.05 }}
+          >
+            Mary-Kate
+            <span className="block italic text-ink-soft" style={{ fontSize: "0.5em" }}>
+              &amp;
+            </span>
+            Benji
+          </motion.h1>
+        </div>
 
         <motion.div
           custom={2}
