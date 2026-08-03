@@ -10,8 +10,8 @@ const faqs: { q: string; a: string }[] = [
     a: "Please plan to arrive by 5:30 PM so you're seated before the ceremony begins at 6:00 PM.",
   },
   {
-    q: "Is the ceremony indoors or outdoors?",
-    a: "The ceremony is held inside Anthony Chapel — a glass chapel set among the trees at Garvan Woodland Gardens. Cocktails and the dinner reception follow at the Hamp Williams Building in downtown Hot Springs.",
+    q: "Where are the ceremony and reception held?",
+    a: "The ceremony is inside Anthony Chapel — a glass chapel among the trees at Garvan Woodland Gardens (550 Arkridge Road). Cocktails and the dinner reception are at a separate location: the Hamp Williams Building in downtown Hot Springs, a short drive away, with cocktails beginning in its courtyard.",
   },
   {
     q: "Can I bring a guest or plus-one?",
