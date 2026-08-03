@@ -37,7 +37,7 @@ export default function Gallery() {
   }, []);
 
   return (
-    <section id="gallery" className="py-24 bg-cream">
+    <section id="gallery" className="py-24 bg-paper">
       <div className="max-w-6xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -46,9 +46,9 @@ export default function Gallery() {
           transition={{ duration: 0.7 }}
           className="text-center mb-14"
         >
-          <p className="font-sans text-xs tracking-widest uppercase text-green-accent mb-3">A peek into our world</p>
-          <h2 className="font-serif text-5xl text-green-deep font-light">Gallery</h2>
-          <div className="section-divider" />
+          <p className="font-sans text-xs tracking-widest uppercase text-ink-soft mb-3">A peek into our world</p>
+          <h2 className="font-serif text-5xl text-ink font-light">Gallery</h2>
+          <div className="mx-auto my-6 h-px w-16 bg-ink/30" />
         </motion.div>
 
         <motion.div
@@ -99,7 +99,7 @@ export default function Gallery() {
         index={index}
         plugins={[Zoom, Slideshow]}
         styles={{
-          root: { "--yarl__color_backdrop": "rgba(30, 51, 41, 0.97)" },
+          root: { "--yarl__color_backdrop": "rgba(17, 17, 17, 0.97)" },
         }}
       />
     </section>
