@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
-// Wedding day — June 5, 2027 at Anthony Chapel, Hot Springs, AR
-const WEDDING_DATE = new Date("2027-06-05T16:00:00");
+// Wedding day — June 5, 2027, 6:00 PM ceremony at Anthony Chapel, Hot Springs, AR
+const WEDDING_DATE = new Date("2027-06-05T18:00:00");
 
 function getTimeLeft() {
   const diff = WEDDING_DATE.getTime() - Date.now();

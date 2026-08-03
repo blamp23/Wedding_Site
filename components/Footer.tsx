@@ -1,33 +1,34 @@
 export default function Footer() {
   return (
-    <footer className="bg-green-deep py-12 text-center">
+    <footer className="bg-ink py-14 text-center">
       {/* Monogram */}
-      <div className="w-16 h-16 mx-auto mb-6 rounded-full border border-green-light/30 flex items-center justify-center">
-        <span className="font-serif text-xl text-cream font-light">B&amp;M</span>
+      <div className="w-16 h-16 mx-auto mb-6 rounded-full border border-paper/30 flex items-center justify-center">
+        <span className="font-serif text-xl text-paper font-light">B&amp;M</span>
       </div>
 
-      <p className="font-serif text-2xl text-cream font-light mb-2">
+      <p className="font-serif text-2xl text-paper font-light mb-2">
         Benji &amp; Mary-Kate
       </p>
-      <p className="font-sans text-xs tracking-widest uppercase text-green-light/60 mb-6">
-        Engagement Party · July 2026
+      <p className="font-sans text-xs tracking-widest uppercase text-paper/50 mb-8">
+        June 5, 2027 · Hot Springs, Arkansas
       </p>
 
+      {/* Questions / inquiries */}
       <div className="flex items-center justify-center gap-4 mb-8">
-        <div className="h-px w-12 bg-green-light/20" />
-        <p className="font-sans text-xs text-green-light/40">
-          Questions? Reach us at{" "}
+        <div className="h-px w-12 bg-paper/20" />
+        <p className="font-sans text-xs text-paper/50">
+          Questions? Email us at{" "}
           <a
-            href="mailto:lampbenji@gmail.com"
-            className="underline underline-offset-2 hover:text-green-light transition-colors"
+            href="mailto:mk.and.benji@gmail.com"
+            className="underline underline-offset-2 hover:text-paper transition-colors"
           >
-            lampbenji@gmail.com
+            mk.and.benji@gmail.com
           </a>
         </p>
-        <div className="h-px w-12 bg-green-light/20" />
+        <div className="h-px w-12 bg-paper/20" />
       </div>
 
-      <p className="font-sans text-xs text-green-light/30">
+      <p className="font-sans text-xs text-paper/30">
         &copy; {new Date().getFullYear()} Benji Lamp &amp; Mary-Kate Mitchell
       </p>
     </footer>

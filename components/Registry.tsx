@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 
+// TODO: replace with real registry links once created.
 const registries = [
   {
     name: "Zola",
@@ -34,7 +35,7 @@ const fadeUp = {
 
 export default function Registry() {
   return (
-    <section id="registry" className="py-24 bg-cream-secondary">
+    <section id="registry" className="py-24 bg-paper">
       <div className="max-w-4xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -43,10 +44,10 @@ export default function Registry() {
           transition={{ duration: 0.7 }}
           className="text-center mb-14"
         >
-          <p className="font-sans text-xs tracking-widest uppercase text-green-accent mb-3">For those who asked</p>
-          <h2 className="font-serif text-5xl text-green-deep font-light">Registry</h2>
-          <div className="section-divider" />
-          <p className="font-sans text-green-deep/70 text-sm max-w-md mx-auto">
+          <p className="font-sans text-xs tracking-widest uppercase text-ink-soft mb-3">For those who asked</p>
+          <h2 className="font-serif text-5xl text-ink font-light">Registry</h2>
+          <div className="mx-auto my-6 h-px w-16 bg-ink/30" />
+          <p className="font-sans text-ink-soft text-sm max-w-md mx-auto">
             Your presence at our celebration is the greatest gift. If you&apos;d like to give a gift, we&apos;ve registered at the following places.
           </p>
         </motion.div>
@@ -63,14 +64,14 @@ export default function Registry() {
               whileInView="visible"
               viewport={{ once: true, margin: "-40px" }}
               variants={fadeUp}
-              className="group block border border-green-accent/20 bg-cream p-8 hover:border-green-DEFAULT hover:shadow-sm transition-all duration-300"
+              className="group block border border-ink/15 bg-paper p-8 hover:border-ink hover:shadow-sm transition-all duration-300"
             >
-              <div className="w-10 h-10 rounded-full bg-green-deep flex items-center justify-center mb-6 group-hover:bg-green-accent transition-colors">
-                <span className="font-serif text-cream text-lg font-light">{r.icon}</span>
+              <div className="w-10 h-10 rounded-full bg-ink flex items-center justify-center mb-6 transition-colors">
+                <span className="font-serif text-paper text-lg font-light">{r.icon}</span>
               </div>
-              <h3 className="font-serif text-xl text-green-deep font-light mb-2">{r.name}</h3>
-              <p className="font-sans text-xs text-green-deep/60 leading-relaxed mb-4">{r.description}</p>
-              <span className="font-sans text-xs tracking-widest uppercase text-green-accent group-hover:text-green-deep transition-colors">
+              <h3 className="font-serif text-xl text-ink font-light mb-2">{r.name}</h3>
+              <p className="font-sans text-xs text-ink-soft leading-relaxed mb-4">{r.description}</p>
+              <span className="font-sans text-xs tracking-widest uppercase text-ink-soft group-hover:text-ink transition-colors">
                 View Registry →
               </span>
             </motion.a>

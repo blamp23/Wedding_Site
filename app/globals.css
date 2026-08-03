@@ -29,23 +29,23 @@
   }
 
   .section-divider {
-    @apply w-16 h-px bg-green-accent mx-auto my-6;
+    @apply w-16 h-px bg-ink/30 mx-auto my-6;
   }
 
   .btn-primary {
-    @apply inline-block px-8 py-3 bg-green text-cream font-sans text-sm tracking-widest uppercase
-           hover:bg-green-deep transition-colors duration-300 cursor-pointer;
+    @apply inline-block px-8 py-3 bg-ink text-paper font-sans text-sm tracking-widest uppercase
+           hover:opacity-90 transition-opacity duration-300 cursor-pointer;
   }
 
   .btn-outline {
-    @apply inline-block px-8 py-3 border border-green text-green font-sans text-sm tracking-widest uppercase
-           hover:bg-green hover:text-cream transition-colors duration-300 cursor-pointer;
+    @apply inline-block px-8 py-3 border border-ink text-ink font-sans text-sm tracking-widest uppercase
+           hover:bg-ink hover:text-paper transition-colors duration-300 cursor-pointer;
   }
 }
 
 /* Lightbox overrides */
 .yarl__root {
-  --yarl__color_backdrop: rgba(30, 51, 41, 0.95) !important;
+  --yarl__color_backdrop: rgba(17, 17, 17, 0.97) !important;
 }
 
 /* Scrollbar */
@@ -53,9 +53,9 @@
   width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #EDE8DC;
+  background: #F6F5F2;
 }
 ::-webkit-scrollbar-thumb {
-  background: #4A7C6F;
+  background: #141414;
   border-radius: 3px;
 }

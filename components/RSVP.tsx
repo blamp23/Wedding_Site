@@ -115,7 +115,7 @@ export default function RSVP() {
   };
 
   return (
-    <section id="rsvp" className="py-24 bg-green-deep">
+    <section id="rsvp" className="py-24 bg-ink">
       <div className="max-w-2xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -124,11 +124,11 @@ export default function RSVP() {
           transition={{ duration: 0.7 }}
           className="text-center mb-12"
         >
-          <p className="font-sans text-xs tracking-widest uppercase text-green-light mb-3">We hope to see you</p>
-          <h2 className="font-serif text-5xl text-cream font-light">RSVP</h2>
-          <div className="w-16 h-px bg-green-accent mx-auto my-6" />
-          <p className="font-sans text-cream/70 text-sm leading-relaxed">
-            Please RSVP by <strong className="text-cream">June 28, 2026</strong>.<br />
+          <p className="font-sans text-xs tracking-widest uppercase text-paper/50 mb-3">We hope to see you</p>
+          <h2 className="font-serif text-5xl text-paper font-light">RSVP</h2>
+          <div className="w-16 h-px bg-paper/40 mx-auto my-6" />
+          <p className="font-sans text-paper/70 text-sm leading-relaxed">
+            Please RSVP by <strong className="text-paper">May 5, 2027</strong>.<br />
             Begin typing your name to find yourself on the guest list.
           </p>
         </motion.div>
@@ -142,16 +142,16 @@ export default function RSVP() {
               exit={{ opacity: 0 }}
               className="text-center py-12"
             >
-              <div className="w-16 h-16 mx-auto mb-6 rounded-full border border-green-light flex items-center justify-center">
-                <svg className="w-7 h-7 text-green-light" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-16 h-16 mx-auto mb-6 rounded-full border border-paper/50 flex items-center justify-center">
+                <svg className="w-7 h-7 text-paper" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 13l4 4L19 7" />
                 </svg>
               </div>
-              <h3 className="font-serif text-3xl text-cream font-light mb-3">Thank you!</h3>
-              <p className="font-sans text-cream/70 text-sm mb-8">
+              <h3 className="font-serif text-3xl text-paper font-light mb-3">Thank you!</h3>
+              <p className="font-sans text-paper/70 text-sm mb-8">
                 We&apos;ve received your RSVP and can&apos;t wait to celebrate with you.
               </p>
-              <button onClick={reset} className="font-sans text-xs tracking-widest uppercase text-green-light border-b border-green-light/40 hover:border-green-light transition-colors pb-0.5">
+              <button onClick={reset} className="font-sans text-xs tracking-widest uppercase text-paper/70 border-b border-paper/40 hover:border-paper transition-colors pb-0.5">
                 Submit another RSVP
               </button>
             </motion.div>
@@ -163,13 +163,13 @@ export default function RSVP() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0 }}
-              className="border border-green-accent/30 bg-green-DEFAULT/30 p-8 text-center space-y-5"
+              className="border border-paper/20 bg-white/5 p-8 text-center space-y-5"
             >
-              <p className="font-sans text-xs tracking-widest uppercase text-green-light">Heads up</p>
-              <h3 className="font-serif text-2xl text-cream font-light">
+              <p className="font-sans text-xs tracking-widest uppercase text-paper/50">Heads up</p>
+              <h3 className="font-serif text-2xl text-paper font-light">
                 It looks like you&apos;ve already RSVP&apos;d!
               </h3>
-              <div className="text-left space-y-2 border-t border-green-accent/20 pt-5">
+              <div className="text-left space-y-2 border-t border-paper/15 pt-5">
                 <Row label="Attending" value={existingRsvp.attending === "yes" ? "Joyfully accepts" : "Regretfully declines"} />
                 {existingRsvp.dietary && existingRsvp.dietary !== "—" && (
                   <Row label="Dietary" value={existingRsvp.dietary} />
@@ -181,17 +181,17 @@ export default function RSVP() {
                   <Row label="Notes" value={existingRsvp.notes} />
                 )}
               </div>
-              <p className="font-sans text-cream/60 text-sm">Would you like to update your response?</p>
+              <p className="font-sans text-paper/60 text-sm">Would you like to update your response?</p>
               <div className="flex gap-3">
                 <button
                   onClick={() => prefillFromExisting(existingRsvp)}
-                  className="flex-1 btn-primary bg-cream text-green-deep hover:bg-cream-secondary"
+                  className="flex-1 btn-primary bg-paper text-ink hover:bg-paper-soft"
                 >
                   Update my RSVP
                 </button>
                 <button
                   onClick={reset}
-                  className="flex-1 btn-outline border-green-accent/40 text-cream/60 hover:text-cream hover:border-cream"
+                  className="flex-1 btn-outline border-paper/40 text-paper/60 hover:text-ink hover:bg-paper hover:border-paper"
                 >
                   Keep as is
                 </button>
@@ -222,16 +222,16 @@ export default function RSVP() {
                     setShowDropdown(true);
                   }}
                   onFocus={() => query.length >= 2 && setShowDropdown(true)}
-                  className="w-full bg-transparent border-b border-green-accent/50 focus:border-cream py-3 font-sans text-cream placeholder:text-cream/30 outline-none transition-colors"
+                  className="w-full bg-transparent border-b border-paper/30 focus:border-paper py-3 font-sans text-paper placeholder:text-paper/30 outline-none transition-colors"
                 />
                 {showDropdown && filtered.length > 0 && (
-                  <div className="absolute z-20 top-full left-0 right-0 bg-green-DEFAULT border border-green-accent/30 shadow-xl mt-1 max-h-56 overflow-y-auto">
+                  <div className="absolute z-20 top-full left-0 right-0 bg-[#222222] border border-paper/20 shadow-xl mt-1 max-h-56 overflow-y-auto">
                     {filtered.map((name) => (
                       <button
                         key={name}
                         type="button"
                         onClick={() => selectGuest(name)}
-                        className="w-full text-left px-4 py-3 font-sans text-sm text-cream/80 hover:bg-green-accent/20 hover:text-cream transition-colors"
+                        className="w-full text-left px-4 py-3 font-sans text-sm text-paper/80 hover:bg-white/10 hover:text-paper transition-colors"
                       >
                         {name}
                       </button>
@@ -257,8 +257,8 @@ export default function RSVP() {
                         onClick={() => setAttending(v)}
                         className={`flex-1 py-3 font-sans text-xs tracking-widest uppercase border transition-colors ${
                           attending === v
-                            ? "bg-cream text-green-deep border-cream"
-                            : "bg-transparent text-cream/60 border-green-accent/40 hover:border-cream/60 hover:text-cream"
+                            ? "bg-paper text-ink border-paper"
+                            : "bg-transparent text-paper/60 border-paper/30 hover:border-paper/60 hover:text-paper"
                         }`}
                       >
                         {v === "yes" ? "Joyfully accepts" : "Regretfully declines"}
@@ -268,7 +268,7 @@ export default function RSVP() {
                 </motion.div>
               )}
 
-              {/* Dietary + Plus One + Notes */}
+              {/* Dietary + Plus One */}
               {selectedName && attending === "yes" && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className="space-y-6">
                   <div>
@@ -278,7 +278,7 @@ export default function RSVP() {
                       value={dietary}
                       placeholder="e.g. Vegetarian, gluten-free…"
                       onChange={(e) => setDietary(e.target.value)}
-                      className="w-full bg-transparent border-b border-green-accent/50 focus:border-cream py-3 font-sans text-cream placeholder:text-cream/30 outline-none transition-colors"
+                      className="w-full bg-transparent border-b border-paper/30 focus:border-paper py-3 font-sans text-paper placeholder:text-paper/30 outline-none transition-colors"
                     />
                   </div>
                   <div>
@@ -288,7 +288,7 @@ export default function RSVP() {
                       value={plusOne}
                       placeholder="Guest name, if applicable"
                       onChange={(e) => setPlusOne(e.target.value)}
-                      className="w-full bg-transparent border-b border-green-accent/50 focus:border-cream py-3 font-sans text-cream placeholder:text-cream/30 outline-none transition-colors"
+                      className="w-full bg-transparent border-b border-paper/30 focus:border-paper py-3 font-sans text-paper placeholder:text-paper/30 outline-none transition-colors"
                     />
                   </div>
                 </motion.div>
@@ -303,7 +303,7 @@ export default function RSVP() {
                     placeholder="Any message for Benji & Mary-Kate…"
                     rows={3}
                     onChange={(e) => setNotes(e.target.value)}
-                    className="w-full bg-transparent border-b border-green-accent/50 focus:border-cream py-3 font-sans text-cream placeholder:text-cream/30 outline-none transition-colors resize-none"
+                    className="w-full bg-transparent border-b border-paper/30 focus:border-paper py-3 font-sans text-paper placeholder:text-paper/30 outline-none transition-colors resize-none"
                   />
                 </motion.div>
               )}
@@ -319,7 +319,7 @@ export default function RSVP() {
                   <button
                     type="submit"
                     disabled={status === "submitting"}
-                    className="w-full btn-primary bg-cream text-green-deep hover:bg-cream-secondary disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full btn-primary bg-paper text-ink hover:bg-paper-soft disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {status === "submitting" ? "Sending…" : "Submit RSVP"}
                   </button>
@@ -335,7 +335,7 @@ export default function RSVP() {
 
 function Label({ text }: { text: string }) {
   return (
-    <span className="block font-sans text-xs tracking-widest uppercase text-green-light mb-1">
+    <span className="block font-sans text-xs tracking-widest uppercase text-paper/50 mb-1">
       {text}
     </span>
   );
@@ -344,8 +344,8 @@ function Label({ text }: { text: string }) {
 function Row({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex gap-4">
-      <span className="font-sans text-xs tracking-widest uppercase text-green-light w-20 shrink-0 pt-0.5">{label}</span>
-      <span className="font-sans text-cream/80 text-sm">{value}</span>
+      <span className="font-sans text-xs tracking-widest uppercase text-paper/50 w-20 shrink-0 pt-0.5">{label}</span>
+      <span className="font-sans text-paper/80 text-sm">{value}</span>
     </div>
   );
 }

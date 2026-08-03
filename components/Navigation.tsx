@@ -3,9 +3,9 @@
 import { useEffect, useState } from "react";
 
 const links = [
-  { label: "Our Story", href: "#story" },
   { label: "Gallery", href: "#gallery" },
   { label: "Venue", href: "#venue" },
+  { label: "Accommodations", href: "#accommodations" },
   { label: "RSVP", href: "#rsvp" },
   { label: "Registry", href: "#registry" },
 ];
@@ -23,17 +23,12 @@ export default function Navigation() {
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled ? "bg-cream/95 backdrop-blur-sm shadow-sm" : "bg-transparent"
+        scrolled ? "bg-paper/95 backdrop-blur-sm shadow-sm" : "bg-transparent"
       }`}
     >
       <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-        <a
-          href="#top"
-          className={`font-serif text-xl tracking-wide transition-colors ${
-            scrolled ? "text-green-deep" : "text-cream"
-          }`}
-        >
-          B & MK
+        <a href="#top" className="font-serif text-xl tracking-wide text-ink">
+          B &amp; MK
         </a>
 
         {/* Desktop links */}
@@ -42,9 +37,7 @@ export default function Navigation() {
             <li key={href}>
               <a
                 href={href}
-                className={`font-sans text-xs tracking-widest uppercase transition-colors hover:opacity-70 ${
-                  scrolled ? "text-green-deep" : "text-cream"
-                }`}
+                className="font-sans text-xs tracking-widest uppercase text-ink transition-opacity hover:opacity-60"
               >
                 {label}
               </a>
@@ -54,9 +47,7 @@ export default function Navigation() {
 
         {/* Mobile hamburger */}
         <button
-          className={`md:hidden flex flex-col gap-1.5 p-2 transition-colors ${
-            scrolled ? "text-green-deep" : "text-cream"
-          }`}
+          className="md:hidden flex flex-col gap-1.5 p-2 text-ink"
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label="Toggle menu"
         >
@@ -68,14 +59,14 @@ export default function Navigation() {
 
       {/* Mobile menu */}
       {menuOpen && (
-        <div className="md:hidden bg-cream/98 backdrop-blur-sm border-t border-cream-dark px-6 py-4">
+        <div className="md:hidden bg-paper/98 backdrop-blur-sm border-t border-ink/10 px-6 py-4">
           <ul className="flex flex-col gap-4">
             {links.map(({ label, href }) => (
               <li key={href}>
                 <a
                   href={href}
                   onClick={() => setMenuOpen(false)}
-                  className="font-sans text-xs tracking-widest uppercase text-green-deep hover:text-green-accent transition-colors"
+                  className="font-sans text-xs tracking-widest uppercase text-ink hover:opacity-60 transition-opacity"
                 >
                   {label}
                 </a>
