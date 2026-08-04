@@ -147,7 +147,9 @@ export default function RSVP() {
           <div className="w-16 h-px bg-paper/40 mx-auto my-6" />
           <p className="font-sans text-paper/70 text-sm leading-relaxed">
             Please RSVP by <strong className="text-paper">May 5, 2027</strong>.<br />
-            Begin typing your name to find your party.
+            Enter the first and last name of <strong className="text-paper">one</strong> member of your party.
+            If you&apos;re responding for a guest or your family, you&apos;ll be able to RSVP for your
+            whole group right here.
           </p>
         </motion.div>
 
@@ -228,6 +230,9 @@ export default function RSVP() {
               {/* Name autocomplete */}
               <div className="relative" ref={dropdownRef}>
                 <Label text="Your Name" />
+                <p className="mb-2 font-sans text-xs text-paper/40 italic">
+                  e.g. Sarah Fortune — not &ldquo;The Fortune Family&rdquo; or &ldquo;Dr. &amp; Mrs. Fortune&rdquo;
+                </p>
                 <input
                   type="text"
                   value={query}
