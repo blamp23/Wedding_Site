@@ -10,8 +10,8 @@ type Social = { type: "linkedin" | "instagram"; url: string };
 type Member = { name: string; role?: string; bio?: string; emoji?: string; hornsDown?: boolean; socials?: Social[] };
 
 const bridesmaids: Member[] = [
-  { name: "Grace Carter", emoji: "🐗", socials: [{ type: "linkedin", url: "https://www.linkedin.com/in/grace-carter-24a926245/" }] },
-  { name: "Rylie Reid", emoji: "🐗", socials: [{ type: "linkedin", url: "https://www.linkedin.com/in/rylie-reid/" }] },
+  { name: "Grace Carter", emoji: "🐗", bio: "Scary-movie enjoyer and very good at making stuffed peppers.", socials: [{ type: "linkedin", url: "https://www.linkedin.com/in/grace-carter-24a926245/" }] },
+  { name: "Rylie Reid", emoji: "🐗", bio: "Second-best medical device saleswoman at ConMed.", socials: [{ type: "linkedin", url: "https://www.linkedin.com/in/rylie-reid/" }] },
 ];
 
 const groomsmen: Member[] = [
