@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getRsvpIndex, appendRsvpRow, updateRsvpRow, type RsvpData } from "@/lib/sheets";
+import { getRsvpIndex, getSpreadsheetMeta, appendRsvpRow, updateRsvpRow, type RsvpData } from "@/lib/sheets";
 import { households } from "@/data/guests";
 
 type MemberResponse = { name: string; attending: "yes" | "no"; plusOne?: string };
@@ -15,8 +15,8 @@ export async function GET(req: NextRequest) {
       const missing = required.filter((v) => !process.env[v]);
       if (missing.length > 0) return NextResponse.json({ configured: false, missing });
       try {
-        const index = await getRsvpIndex();
-        return NextResponse.json({ configured: true, canRead: true, rowCount: index.size });
+        const [index, meta] = await Promise.all([getRsvpIndex(), getSpreadsheetMeta()]);
+        return NextResponse.json({ configured: true, canRead: true, rowCount: index.size, title: meta.title, tabs: meta.tabs });
       } catch (e) {
         const msg = (e instanceof Error ? e.message : String(e)).slice(0, 180);
         return NextResponse.json({ configured: true, canRead: false, error: msg });

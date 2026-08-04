@@ -22,6 +22,19 @@ function sheetsClient() {
   return google.sheets({ version: "v4", auth: getAuth() });
 }
 
+// Spreadsheet title + tab names (for diagnostics / health check).
+export async function getSpreadsheetMeta(): Promise<{ title: string; tabs: string[] }> {
+  const sheets = sheetsClient();
+  const res = await sheets.spreadsheets.get({
+    spreadsheetId: process.env.GOOGLE_SHEET_ID,
+    fields: "properties.title,sheets.properties.title",
+  });
+  return {
+    title: res.data.properties?.title ?? "",
+    tabs: (res.data.sheets ?? []).map((s) => s.properties?.title ?? "").filter(Boolean),
+  };
+}
+
 // Fetch all RSVP rows, keyed by lowercased name, so we can upsert per person.
 export async function getRsvpIndex(): Promise<
   Map<string, { rowIndex: number; data: RsvpData }>
