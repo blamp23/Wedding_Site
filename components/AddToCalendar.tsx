@@ -2,9 +2,9 @@
 
 import { useEffect, useRef, useState } from "react";
 
-// June 5, 2027, 6:00 PM Central (CDT, UTC-5) → UTC. Ends ~11:00 PM CDT.
+// June 5, 2027, 6:00 PM Central (CDT, UTC-5) → UTC. Ends 11:30 PM CDT.
 const START = "20270605T230000Z";
-const END = "20270606T040000Z";
+const END = "20270606T043000Z";
 const TITLE = "Mary-Kate & Benji's Wedding";
 const LOCATION = "Anthony Chapel at Garvan Woodland Gardens, 550 Arkridge Rd, Hot Springs, AR 71913";
 const DETAILS =
