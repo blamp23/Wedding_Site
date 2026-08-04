@@ -1,21 +1,15 @@
 "use client";
 
-import { useState } from "react";
 import { motion } from "framer-motion";
 
-// Featured hotel. Drop a photo at public/images/hotels/doubletree.jpg to
-// show it; until then a placeholder appears. Room-block details TBD.
-const featured = {
-  name: "DoubleTree by Hilton Hot Springs",
-  address: ["4813 Central Ave", "Hot Springs, AR 71913"],
-  detail:
-    "Our featured hotel: a comfortable, full-service stay along Central Avenue, close to downtown Hot Springs and Lake Hamilton.",
-  url: "https://www.hilton.com/en/hotels/hothsdt-doubletree-hot-springs/",
-  image: "/images/hotels/hilton.jpeg",
-};
-
-// TODO: confirm these nearby options; update names, distances, links.
-const others = [
+// Hotels near Hot Springs, DoubleTree listed first.
+// TODO: confirm details/links; add room-block info when arranged.
+const hotels = [
+  {
+    name: "DoubleTree by Hilton Hot Springs",
+    detail: "Full-service hotel on Central Avenue, near downtown and Lake Hamilton.",
+    url: "https://www.hilton.com/en/hotels/hothsdt-doubletree-hot-springs/",
+  },
   {
     name: "The Waters Hotel",
     detail: "Boutique hotel in historic downtown Hot Springs.",
@@ -35,28 +29,8 @@ const others = [
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
-  visible: (i: number) => ({ opacity: 1, y: 0, transition: { duration: 0.6, delay: i * 0.1 } }),
+  visible: (i: number) => ({ opacity: 1, y: 0, transition: { duration: 0.6, delay: i * 0.08 } }),
 };
-
-function FeaturedImage() {
-  const [err, setErr] = useState(false);
-  if (err) {
-    return (
-      <div className="w-full h-full min-h-[220px] bg-paper flex items-center justify-center">
-        <span className="font-sans text-xs tracking-widest uppercase text-ink-faint">Photo coming soon</span>
-      </div>
-    );
-  }
-  // eslint-disable-next-line @next/next/no-img-element
-  return (
-    <img
-      src={featured.image}
-      alt={featured.name}
-      onError={() => setErr(true)}
-      className="w-full h-full object-cover"
-    />
-  );
-}
 
 export default function Accommodations() {
   return (
@@ -77,38 +51,8 @@ export default function Accommodations() {
           </p>
         </motion.div>
 
-        {/* Featured hotel */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-40px" }}
-          transition={{ duration: 0.6 }}
-          className="grid md:grid-cols-2 border border-ink/15 bg-paper overflow-hidden mb-10"
-        >
-          <div className="min-h-[220px]">
-            <FeaturedImage />
-          </div>
-          <div className="p-8 flex flex-col justify-center">
-            <p className="font-sans text-xs tracking-widest uppercase text-ink-soft mb-2">Featured Hotel</p>
-            <h3 className="font-serif text-2xl text-ink font-light mb-1">{featured.name}</h3>
-            <address className="font-sans not-italic text-ink-soft text-sm leading-relaxed mb-3">
-              {featured.address.map((line) => (
-                <p key={line}>{line}</p>
-              ))}
-            </address>
-            <p className="font-sans text-sm text-ink-soft leading-relaxed mb-6">{featured.detail}</p>
-            <a href={featured.url} target="_blank" rel="noopener noreferrer" className="btn-outline self-start">
-              View Hotel
-            </a>
-          </div>
-        </motion.div>
-
-        {/* Other options */}
-        <p className="font-sans text-xs tracking-widest uppercase text-ink-soft text-center mb-6">
-          Other Nearby Options
-        </p>
-        <div className="grid sm:grid-cols-3 gap-6">
-          {others.map((h, i) => (
+        <div className="grid sm:grid-cols-2 gap-6">
+          {hotels.map((h, i) => (
             <motion.a
               key={h.name}
               href={h.url}
@@ -122,9 +66,9 @@ export default function Accommodations() {
               className="group block border border-ink/15 bg-paper p-8 hover:border-ink transition-all duration-300"
             >
               <h3 className="font-serif text-xl text-ink font-light mb-2">{h.name}</h3>
-              <p className="font-sans text-xs text-ink-soft leading-relaxed mb-4">{h.detail}</p>
+              <p className="font-sans text-sm text-ink-soft leading-relaxed mb-4">{h.detail}</p>
               <span className="font-sans text-xs tracking-widest uppercase text-ink-soft group-hover:text-ink transition-colors">
-                View on Map →
+                View →
               </span>
             </motion.a>
           ))}
