@@ -29,6 +29,7 @@ export default function RSVP() {
   const [errorMsg, setErrorMsg] = useState("");
   const [existingRsvp, setExistingRsvp] = useState<ExistingRsvp | null>(null);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [checking, setChecking] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const filtered = useMemo(() => {
@@ -47,15 +48,44 @@ export default function RSVP() {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  const selectGuest = (name: string) => {
+  const selectGuest = async (name: string) => {
     const h = findHousehold(name);
     if (!h) return;
     setPrimaryName(name);
-    setHousehold(h);
-    // Default everyone to attending; guests uncheck those who can't make it.
-    setAttendance(Object.fromEntries(h.members.map((m) => [m, true])));
     setQuery(name);
     setShowDropdown(false);
+    setHousehold(null);
+    setStatus("idle");
+    setChecking(true);
+    const defaults = () =>
+      setAttendance(Object.fromEntries(h.members.map((m) => [m, true])));
+
+    try {
+      const res = await fetch(`/api/rsvp?householdId=${encodeURIComponent(h.id)}`);
+      const data = await res.json();
+      if (data.alreadyRsvped) {
+        // Already responded — surface the message right away.
+        setHousehold(h);
+        setExistingRsvp(data.existing);
+        setStatus("alreadyRsvped");
+      } else {
+        setHousehold(h);
+        defaults();
+      }
+    } catch {
+      setHousehold(h);
+      defaults();
+    } finally {
+      setChecking(false);
+    }
+  };
+
+  const onNameKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key !== "Enter") return;
+    e.preventDefault();
+    const exact = allNames.find((n) => n.toLowerCase() === query.trim().toLowerCase());
+    const pick = exact ?? filtered[0];
+    if (pick) selectGuest(pick);
   };
 
   const reset = () => {
@@ -245,6 +275,7 @@ export default function RSVP() {
                     setShowDropdown(true);
                   }}
                   onFocus={() => query.length >= 2 && !household && setShowDropdown(true)}
+                  onKeyDown={onNameKeyDown}
                   className="w-full bg-transparent border-b border-paper/30 focus:border-paper py-3 font-sans text-paper placeholder:text-paper/30 outline-none transition-colors"
                 />
                 {showDropdown && filtered.length > 0 && (
@@ -268,8 +299,12 @@ export default function RSVP() {
                 )}
               </div>
 
+              {checking && (
+                <p className="font-sans text-sm text-paper/50">Looking up your party…</p>
+              )}
+
               {/* Household members — who's coming */}
-              {household && (
+              {household && !checking && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
                   <Label text="Who's coming?" />
                   <div className="mt-2 divide-y divide-paper/10 border-y border-paper/10">

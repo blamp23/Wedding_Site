@@ -4,6 +4,47 @@ import { households } from "@/data/guests";
 
 type MemberResponse = { name: string; attending: "yes" | "no" };
 
+const clean = (v?: string) => (v && v !== "—" ? v : "");
+
+// Read-only lookup: has this household already responded? Used to surface the
+// "you've already RSVP'd" message as soon as a name is selected.
+export async function GET(req: NextRequest) {
+  try {
+    const householdId = req.nextUrl.searchParams.get("householdId");
+    const household = households.find((h) => h.id === householdId);
+    if (!household) return NextResponse.json({ alreadyRsvped: false });
+
+    const missingVars = ["GOOGLE_SERVICE_ACCOUNT_EMAIL", "GOOGLE_PRIVATE_KEY", "GOOGLE_SHEET_ID"].filter(
+      (v) => !process.env[v]
+    );
+    if (missingVars.length > 0) return NextResponse.json({ alreadyRsvped: false });
+
+    const index = await getRsvpIndex();
+    const anyExisting = household.members.some((m) => index.has(m.toLowerCase()));
+    if (!anyExisting) return NextResponse.json({ alreadyRsvped: false });
+
+    const rows = household.members.map((m) => index.get(m.toLowerCase()));
+    const firstExisting = rows.find(Boolean);
+    const plusOneRow = rows.find((e) => e && clean(e.data.plusOne));
+
+    return NextResponse.json({
+      alreadyRsvped: true,
+      existing: {
+        members: household.members.map((m) => ({
+          name: m,
+          attending: index.get(m.toLowerCase())?.data.attending ?? "",
+        })),
+        dietary: clean(firstExisting?.data.dietary),
+        notes: clean(firstExisting?.data.notes),
+        plusOne: clean(plusOneRow?.data.plusOne),
+      },
+    });
+  } catch {
+    // Fail open — let the form load normally if the lookup errors.
+    return NextResponse.json({ alreadyRsvped: false });
+  }
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
