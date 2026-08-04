@@ -2,6 +2,10 @@
 
 import { motion } from "framer-motion";
 
+// TODO: replace with the real Venmo handle (no @).
+const VENMO_HANDLE = "your-venmo-handle";
+const VENMO_URL = `https://venmo.com/u/${VENMO_HANDLE}`;
+
 // TODO: replace with real registry links once created.
 const registries = [
   {
@@ -49,6 +53,33 @@ export default function Registry() {
           <div className="mx-auto my-6 h-px w-16 bg-ink/30" />
           <p className="font-sans text-ink-soft text-sm max-w-md mx-auto">
             Your presence at our celebration is the greatest gift. If you&apos;d like to give a gift, we&apos;ve registered at the following places.
+          </p>
+        </motion.div>
+
+        {/* Honeymoon fund — featured */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-40px" }}
+          transition={{ duration: 0.6 }}
+          className="border border-ink bg-ink text-paper p-10 text-center mb-6"
+        >
+          <p className="font-sans text-xs tracking-widest uppercase text-paper/50 mb-3">Honeymoon Fund</p>
+          <h3 className="font-serif text-3xl text-paper font-light mb-3">Toward Our First Adventure</h3>
+          <p className="font-sans text-sm text-paper/70 max-w-md mx-auto mb-7">
+            More than anything, we&apos;re dreaming of an unforgettable honeymoon. If you&apos;d
+            like to help us celebrate, a gift toward the trip means the world to us.
+          </p>
+          <a
+            href={VENMO_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-primary bg-paper text-ink hover:bg-paper-soft"
+          >
+            Contribute via Venmo
+          </a>
+          <p className="mt-4 font-sans text-xs tracking-widest uppercase text-paper/40">
+            @{VENMO_HANDLE}
           </p>
         </motion.div>
 
