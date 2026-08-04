@@ -106,7 +106,7 @@ function Group({ title, subtitle, members }: { title: string; subtitle: string; 
                 {m.hornsDown && <span className="inline-block ml-1 rotate-180">🤘</span>}
               </p>
               {m.socials && (
-                <div className="mt-2 flex flex-col gap-2">
+                <div className="mt-2 flex gap-3">
                   {m.socials.map((s) => (
                     <a
                       key={s.url}
