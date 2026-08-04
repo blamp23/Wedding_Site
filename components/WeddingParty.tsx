@@ -10,17 +10,17 @@ type Social = { type: "linkedin" | "instagram"; url: string };
 type Member = { name: string; role?: string; bio?: string; emoji?: string; hornsDown?: boolean; socials?: Social[] };
 
 const bridesmaids: Member[] = [
-  { name: "Grace Carter", role: "Bridesmaid", emoji: "🐗", bio: "Scary-movie enjoyer and very good at making stuffed peppers.", socials: [{ type: "linkedin", url: "https://www.linkedin.com/in/grace-carter-24a926245/" }] },
-  { name: "Rylie Reid", role: "Bridesmaid", emoji: "🐗", bio: "Second-best medical device saleswoman at ConMed.", socials: [{ type: "linkedin", url: "https://www.linkedin.com/in/rylie-reid/" }] },
+  { name: "Grace Carter", role: "Bridesmaid", emoji: "🐗", bio: "Scary-movie enjoyer and very good at making stuffed peppers.", socials: [{ type: "linkedin", url: "https://www.linkedin.com/in/grace-carter-24a926245/" }, { type: "instagram", url: "https://www.instagram.com/grace.c.a/" }] },
+  { name: "Rylie Reid", role: "Bridesmaid", emoji: "🐗", bio: "Second-best medical device saleswoman at ConMed.", socials: [{ type: "linkedin", url: "https://www.linkedin.com/in/rylie-reid/" }, { type: "instagram", url: "https://www.instagram.com/ryliereid/" }] },
 ];
 
 const groomsmen: Member[] = [
   { name: "Matthew Lamp", role: "Best Man", hornsDown: true, bio: "Benji's baby brother. The cutest, sweetest baby boy in the whole wide world.", socials: [{ type: "linkedin", url: "https://www.linkedin.com/in/matthewlamp/" }] },
-  { name: "Jake Rose", role: "Groomsman", emoji: "👍", bio: "Founding member of the Marlin Hauz, college roommate, world traveler of the United States.", socials: [{ type: "linkedin", url: "https://www.linkedin.com/in/jake-h-rose/" }] },
-  { name: "Martin Guzman", role: "Groomsman", emoji: "👍", bio: "Founding member of the Marlin Hauz, college roommate, aka Party Marty.", socials: [{ type: "linkedin", url: "https://www.linkedin.com/in/martin-guzman-1133942ab/" }] },
-  { name: "Nathan Peed", role: "Groomsman", emoji: "👍", bio: "Founding member of the Lobster Boyz, college neighbor, drives fast cars and slow boats.", socials: [{ type: "linkedin", url: "https://www.linkedin.com/in/nathanpeed/" }] },
+  { name: "Jake Rose", role: "Groomsman", emoji: "👍", bio: "Founding member of the Marlin Hauz, college roommate, world traveler of the United States.", socials: [{ type: "linkedin", url: "https://www.linkedin.com/in/jake-h-rose/" }, { type: "instagram", url: "https://www.instagram.com/jakerose67/" }] },
+  { name: "Martin Guzman", role: "Groomsman", emoji: "👍", bio: "Founding member of the Marlin Hauz, college roommate, aka Party Marty.", socials: [{ type: "linkedin", url: "https://www.linkedin.com/in/martin-guzman-1133942ab/" }, { type: "instagram", url: "https://www.instagram.com/mar10_guzman/" }] },
+  { name: "Nathan Peed", role: "Groomsman", emoji: "👍", bio: "Founding member of the Lobster Boyz, college neighbor, drives fast cars and slow boats.", socials: [{ type: "linkedin", url: "https://www.linkedin.com/in/nathanpeed/" }, { type: "instagram", url: "https://www.instagram.com/nathan.peed/" }] },
   { name: "Tyler Canty", role: "Groomsman", emoji: "🚑", bio: "Founding member of the Lobster Boyz, college neighbor, really good at dancing and saving lives.", socials: [{ type: "instagram", url: "https://www.instagram.com/tylercanty9/" }] },
-  { name: "Charlie Mitchell", role: "Groomsman", hornsDown: true, bio: "Mary-Kate's baby brother, an Aggie at heart." },
+  { name: "Charlie Mitchell", role: "Groomsman", hornsDown: true, bio: "Mary-Kate's baby brother, an Aggie at heart.", socials: [{ type: "instagram", url: "https://www.instagram.com/chuck_mitchell5/" }] },
 ];
 
 const slug = (name: string) => name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
