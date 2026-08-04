@@ -2,12 +2,6 @@
 
 import { motion } from "framer-motion";
 
-// Approximate — verify/adjust as needed.
-const airports = [
-  { name: "Little Rock — Clinton National (LIT)", detail: "Closest major airport; about a 1 hour drive to Hot Springs (55 mi)." },
-  { name: "Dallas–Fort Worth (DFW)", detail: "Large hub if you'd rather fly into Texas and drive up (~5 hr)." },
-];
-
 const DESTINATION = "Hot Springs, AR";
 // If a Maps Embed API key is set, use the official directions embed;
 // otherwise fall back to the keyless legacy embed.
@@ -52,19 +46,6 @@ export default function Travel() {
           <h2 className="font-serif text-5xl text-ink font-light">Travel</h2>
           <div className="mx-auto my-6 h-px w-16 bg-ink/30" />
         </motion.div>
-
-        {/* Flying in */}
-        <div className="max-w-2xl mx-auto text-center mb-16">
-          <h3 className="font-serif text-2xl text-ink font-light mb-6">Flying In</h3>
-          <div className="space-y-4">
-            {airports.map((a) => (
-              <div key={a.name}>
-                <p className="font-serif text-lg text-ink font-light">{a.name}</p>
-                <p className="font-sans text-sm text-ink-soft">{a.detail}</p>
-              </div>
-            ))}
-          </div>
-        </div>
 
         {/* Driving routes — one per row, alternating sides */}
         <h3 className="font-serif text-2xl text-ink font-light text-center mb-10">Driving to Hot Springs</h3>
