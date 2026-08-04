@@ -11,7 +11,7 @@ const featured = {
   detail:
     "Our featured hotel: a comfortable, full-service stay along Central Avenue, close to downtown Hot Springs and Lake Hamilton.",
   url: "https://www.hilton.com/en/hotels/hothsdt-doubletree-hot-springs/",
-  image: "/images/hotels/doubletree.jpg",
+  image: "/images/hotels/hilton.jpeg",
 };
 
 // TODO: confirm these nearby options; update names, distances, links.

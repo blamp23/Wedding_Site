@@ -6,23 +6,18 @@ import { households, findHousehold, type Household } from "@/data/guests";
 
 type Status = "idle" | "submitting" | "success" | "error" | "alreadyRsvped";
 
-type ExistingRsvp = {
-  members: { name: string; attending: string }[];
-  dietary: string;
-  plusOne: string;
-  notes: string;
-};
+type ExistingMember = { name: string; attending: string; plusOne: string };
+type ExistingRsvp = { members: ExistingMember[]; dietary: string; notes: string };
 
-const allNames = households.flatMap((h) => h.members);
+const allNames = households.flatMap((h) => h.members.map((m) => m.name));
 
 export default function RSVP() {
   const [query, setQuery] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
-  const [primaryName, setPrimaryName] = useState<string | null>(null);
   const [household, setHousehold] = useState<Household | null>(null);
   const [attendance, setAttendance] = useState<Record<string, boolean>>({});
-  const [bringPlusOne, setBringPlusOne] = useState(false);
-  const [plusOneName, setPlusOneName] = useState("");
+  const [plusOneOn, setPlusOneOn] = useState<Record<string, boolean>>({});
+  const [plusOneNames, setPlusOneNames] = useState<Record<string, string>>({});
   const [dietary, setDietary] = useState("");
   const [notes, setNotes] = useState("");
   const [status, setStatus] = useState<Status>("idle");
@@ -51,20 +46,21 @@ export default function RSVP() {
   const selectGuest = async (name: string) => {
     const h = findHousehold(name);
     if (!h) return;
-    setPrimaryName(name);
     setQuery(name);
     setShowDropdown(false);
     setHousehold(null);
     setStatus("idle");
     setChecking(true);
-    const defaults = () =>
-      setAttendance(Object.fromEntries(h.members.map((m) => [m, true])));
+    const defaults = () => {
+      setAttendance(Object.fromEntries(h.members.map((m) => [m.name, true])));
+      setPlusOneOn({});
+      setPlusOneNames({});
+    };
 
     try {
       const res = await fetch(`/api/rsvp?householdId=${encodeURIComponent(h.id)}`);
       const data = await res.json();
       if (data.alreadyRsvped) {
-        // Already responded; surface the message right away.
         setHousehold(h);
         setExistingRsvp(data.existing);
         setStatus("alreadyRsvped");
@@ -90,11 +86,10 @@ export default function RSVP() {
 
   const reset = () => {
     setQuery("");
-    setPrimaryName(null);
     setHousehold(null);
     setAttendance({});
-    setBringPlusOne(false);
-    setPlusOneName("");
+    setPlusOneOn({});
+    setPlusOneNames({});
     setDietary("");
     setNotes("");
     setStatus("idle");
@@ -104,20 +99,18 @@ export default function RSVP() {
   };
 
   const prefillFromExisting = (existing: ExistingRsvp) => {
-    setAttendance(
-      Object.fromEntries(existing.members.map((m) => [m.name, m.attending === "yes"]))
-    );
+    setAttendance(Object.fromEntries(existing.members.map((m) => [m.name, m.attending === "yes"])));
+    setPlusOneOn(Object.fromEntries(existing.members.filter((m) => m.plusOne).map((m) => [m.name, true])));
+    setPlusOneNames(Object.fromEntries(existing.members.filter((m) => m.plusOne).map((m) => [m.name, m.plusOne])));
     setDietary(existing.dietary);
     setNotes(existing.notes);
-    setPlusOneName(existing.plusOne);
-    setBringPlusOne(Boolean(existing.plusOne));
     setExistingRsvp(null);
     setIsUpdating(true);
     setStatus("idle");
   };
 
   const submit = async (overwrite = false) => {
-    if (!household || !primaryName) return;
+    if (!household) return;
     setStatus("submitting");
     setErrorMsg("");
 
@@ -127,12 +120,11 @@ export default function RSVP() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           householdId: household.id,
-          primaryName,
-          members: household.members.map((name) => ({
-            name,
-            attending: attendance[name] ? "yes" : "no",
+          members: household.members.map((m) => ({
+            name: m.name,
+            attending: attendance[m.name] ? "yes" : "no",
+            plusOne: m.plusOne && plusOneOn[m.name] ? plusOneNames[m.name] ?? "" : "",
           })),
-          plusOne: household.allowPlusOne && bringPlusOne ? plusOneName : "",
           dietary,
           notes,
           overwrite: overwrite ? "true" : "false",
@@ -160,7 +152,7 @@ export default function RSVP() {
     submit(isUpdating);
   };
 
-  const anyAttending = household?.members.some((m) => attendance[m]) ?? false;
+  const anyAttending = household?.members.some((m) => attendance[m.name]) ?? false;
 
   return (
     <section id="rsvp" className="py-24 bg-ink">
@@ -221,13 +213,14 @@ export default function RSVP() {
               </h3>
               <div className="text-left space-y-2 border-t border-paper/15 pt-5">
                 {existingRsvp.members.map((m) => (
-                  <Row
-                    key={m.name}
-                    label={m.name}
-                    value={m.attending === "yes" ? "Attending" : m.attending === "no" ? "Not attending" : "TBD"}
-                  />
+                  <div key={m.name}>
+                    <Row
+                      label={m.name}
+                      value={m.attending === "yes" ? "Attending" : m.attending === "no" ? "Not attending" : "TBD"}
+                    />
+                    {m.plusOne && <Row label="+ Guest" value={m.plusOne} />}
+                  </div>
                 ))}
-                {existingRsvp.plusOne && <Row label="Plus one" value={existingRsvp.plusOne} />}
                 {existingRsvp.dietary && <Row label="Dietary" value={existingRsvp.dietary} />}
               </div>
               <p className="font-sans text-paper/60 text-sm">Would you like to update your response?</p>
@@ -270,7 +263,6 @@ export default function RSVP() {
                   autoComplete="off"
                   onChange={(e) => {
                     setQuery(e.target.value);
-                    setPrimaryName(null);
                     setHousehold(null);
                     setShowDropdown(true);
                   }}
@@ -303,26 +295,46 @@ export default function RSVP() {
                 <p className="font-sans text-sm text-paper/50">Looking up your party…</p>
               )}
 
-              {/* Household members: who's coming */}
+              {/* Household members: who's coming (plus-one nested under eligible members) */}
               {household && !checking && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
                   <Label text="Who's coming?" />
                   <div className="mt-2 divide-y divide-paper/10 border-y border-paper/10">
-                    {household.members.map((name) => (
-                      <label
-                        key={name}
-                        className="flex items-center justify-between gap-4 py-3.5 cursor-pointer select-none"
-                      >
-                        <span className="font-sans text-paper">{name}</span>
-                        <input
-                          type="checkbox"
-                          checked={attendance[name] ?? false}
-                          onChange={(e) =>
-                            setAttendance((a) => ({ ...a, [name]: e.target.checked }))
-                          }
-                          className="h-5 w-5 accent-paper cursor-pointer"
-                        />
-                      </label>
+                    {household.members.map((m) => (
+                      <div key={m.name} className="py-3.5">
+                        <label className="flex items-center justify-between gap-4 cursor-pointer select-none">
+                          <span className="font-sans text-paper">{m.name}</span>
+                          <input
+                            type="checkbox"
+                            checked={attendance[m.name] ?? false}
+                            onChange={(e) => setAttendance((a) => ({ ...a, [m.name]: e.target.checked }))}
+                            className="h-5 w-5 accent-paper cursor-pointer"
+                          />
+                        </label>
+
+                        {m.plusOne && attendance[m.name] && (
+                          <div className="mt-3 pl-4 border-l border-paper/15 space-y-3">
+                            <label className="flex items-center gap-3 cursor-pointer select-none">
+                              <input
+                                type="checkbox"
+                                checked={plusOneOn[m.name] ?? false}
+                                onChange={(e) => setPlusOneOn((p) => ({ ...p, [m.name]: e.target.checked }))}
+                                className="h-4 w-4 accent-paper cursor-pointer"
+                              />
+                              <span className="font-sans text-sm text-paper/80">Bringing a guest?</span>
+                            </label>
+                            {plusOneOn[m.name] && (
+                              <input
+                                type="text"
+                                value={plusOneNames[m.name] ?? ""}
+                                placeholder="Guest's name"
+                                onChange={(e) => setPlusOneNames((p) => ({ ...p, [m.name]: e.target.value }))}
+                                className="w-full bg-transparent border-b border-paper/30 focus:border-paper py-2 font-sans text-paper placeholder:text-paper/30 outline-none transition-colors"
+                              />
+                            )}
+                          </div>
+                        )}
+                      </div>
                     ))}
                   </div>
                   <p className="mt-2 font-sans text-xs text-paper/40">
@@ -331,32 +343,8 @@ export default function RSVP() {
                 </motion.div>
               )}
 
-              {/* Plus-one: only when the invitation allows one */}
-              {household?.allowPlusOne && (
-                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className="space-y-3">
-                  <label className="flex items-center gap-3 cursor-pointer select-none">
-                    <input
-                      type="checkbox"
-                      checked={bringPlusOne}
-                      onChange={(e) => setBringPlusOne(e.target.checked)}
-                      className="h-5 w-5 accent-paper cursor-pointer"
-                    />
-                    <span className="font-sans text-sm text-paper/80">I&apos;ll bring a guest</span>
-                  </label>
-                  {bringPlusOne && (
-                    <input
-                      type="text"
-                      value={plusOneName}
-                      placeholder="Guest's name"
-                      onChange={(e) => setPlusOneName(e.target.value)}
-                      className="w-full bg-transparent border-b border-paper/30 focus:border-paper py-3 font-sans text-paper placeholder:text-paper/30 outline-none transition-colors"
-                    />
-                  )}
-                </motion.div>
-              )}
-
               {/* Dietary + notes (party-level) */}
-              {household && anyAttending && (
+              {household && !checking && anyAttending && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
                   <Label text="Dietary Restrictions (optional)" />
                   <input
@@ -369,7 +357,7 @@ export default function RSVP() {
                 </motion.div>
               )}
 
-              {household && (
+              {household && !checking && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
                   <Label text="Notes (optional)" />
                   <textarea
@@ -388,7 +376,7 @@ export default function RSVP() {
                 </p>
               )}
 
-              {household && (
+              {household && !checking && (
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }} className="pt-2">
                   <button
                     type="submit"

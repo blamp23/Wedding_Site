@@ -2,16 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { getRsvpIndex, appendRsvpRow, updateRsvpRow, type RsvpData } from "@/lib/sheets";
 import { households } from "@/data/guests";
 
-type MemberResponse = { name: string; attending: "yes" | "no" };
+type MemberResponse = { name: string; attending: "yes" | "no"; plusOne?: string };
 
 const clean = (v?: string) => (v && v !== "—" ? v : "");
 
-// Read-only lookup: has this household already responded? Used to surface the
-// "you've already RSVP'd" message as soon as a name is selected.
+// Read-only lookup: has this household already responded? Also serves a
+// health check (?health=1) reporting whether the Google env vars are set.
 export async function GET(req: NextRequest) {
   try {
-    // Health check: reports whether the Google env vars are configured
-    // (names only, never values). Visit /api/rsvp?health=1
     if (req.nextUrl.searchParams.get("health") === "1") {
       const required = ["GOOGLE_SERVICE_ACCOUNT_EMAIL", "GOOGLE_PRIVATE_KEY", "GOOGLE_SHEET_ID"];
       const missing = required.filter((v) => !process.env[v]);
@@ -35,23 +33,21 @@ export async function GET(req: NextRequest) {
     if (missingVars.length > 0) return NextResponse.json({ alreadyRsvped: false });
 
     const index = await getRsvpIndex();
-    const anyExisting = household.members.some((m) => index.has(m.toLowerCase()));
+    const anyExisting = household.members.some((m) => index.has(m.name.toLowerCase()));
     if (!anyExisting) return NextResponse.json({ alreadyRsvped: false });
 
-    const rows = household.members.map((m) => index.get(m.toLowerCase()));
+    const rows = household.members.map((m) => index.get(m.name.toLowerCase()));
     const firstExisting = rows.find(Boolean);
-    const plusOneRow = rows.find((e) => e && clean(e.data.plusOne));
 
     return NextResponse.json({
       alreadyRsvped: true,
       existing: {
-        members: household.members.map((m) => ({
-          name: m,
-          attending: index.get(m.toLowerCase())?.data.attending ?? "",
-        })),
+        members: household.members.map((m) => {
+          const e = index.get(m.name.toLowerCase());
+          return { name: m.name, attending: e?.data.attending ?? "", plusOne: clean(e?.data.plusOne) };
+        }),
         dietary: clean(firstExisting?.data.dietary),
         notes: clean(firstExisting?.data.notes),
-        plusOne: clean(plusOneRow?.data.plusOne),
       },
     });
   } catch {
@@ -63,19 +59,9 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const {
-      householdId,
-      primaryName,
-      members,
-      plusOne,
-      dietary,
-      notes,
-      overwrite,
-    } = body as {
+    const { householdId, members, dietary, notes, overwrite } = body as {
       householdId?: string;
-      primaryName?: string;
       members?: MemberResponse[];
-      plusOne?: string;
       dietary?: string;
       notes?: string;
       overwrite?: string;
@@ -94,17 +80,11 @@ export async function POST(req: NextRequest) {
     }
 
     // Every submitted name must belong to this household.
-    const memberSet = new Set(household.members.map((m) => m.toLowerCase()));
-    const allValid = members.every((m) => m?.name && memberSet.has(m.name.toLowerCase()));
+    const byName = new Map(household.members.map((m) => [m.name.toLowerCase(), m]));
+    const allValid = members.every((m) => m?.name && byName.has(m.name.toLowerCase()));
     if (!allValid) {
       return NextResponse.json({ error: "Guest list mismatch." }, { status: 400 });
     }
-
-    // Plus-one only honored when the invitation allows it.
-    const plusOneName = household.allowPlusOne ? (plusOne ?? "").trim() : "";
-    const primary = primaryName && memberSet.has(primaryName.toLowerCase())
-      ? primaryName
-      : members[0].name;
 
     const missingVars = ["GOOGLE_SERVICE_ACCOUNT_EMAIL", "GOOGLE_PRIVATE_KEY", "GOOGLE_SHEET_ID"].filter(
       (v) => !process.env[v]
@@ -122,32 +102,30 @@ export async function POST(req: NextRequest) {
     // If anyone in the household has already responded, ask before overwriting.
     const anyExisting = members.some((m) => index.has(m.name.toLowerCase()));
     if (anyExisting && overwrite !== "true") {
-      const firstExisting = members
-        .map((m) => index.get(m.name.toLowerCase()))
-        .find(Boolean);
-      const primaryExisting = index.get(primary.toLowerCase());
-      const clean = (v?: string) => (v && v !== "—" ? v : "");
+      const firstExisting = members.map((m) => index.get(m.name.toLowerCase())).find(Boolean);
       return NextResponse.json({
         alreadyRsvped: true,
         existing: {
-          members: members.map((m) => ({
-            name: m.name,
-            attending: index.get(m.name.toLowerCase())?.data.attending ?? "",
-          })),
+          members: members.map((m) => {
+            const e = index.get(m.name.toLowerCase());
+            return { name: m.name, attending: e?.data.attending ?? "", plusOne: clean(e?.data.plusOne) };
+          }),
           dietary: clean(firstExisting?.data.dietary),
           notes: clean(firstExisting?.data.notes),
-          plusOne: clean(primaryExisting?.data.plusOne),
         },
       });
     }
 
-    // Upsert one row per member (plus-one name recorded on the primary's row).
+    // Upsert one row per member; a plus-one is honored only if that member is
+    // flagged for one in the guest list.
     for (const m of members) {
+      const guest = byName.get(m.name.toLowerCase());
+      const plusOne = guest?.plusOne ? (m.plusOne ?? "").trim() : "";
       const data: RsvpData = {
         name: m.name,
         attending: m.attending === "yes" ? "yes" : "no",
         dietary: dietary ?? "",
-        plusOne: m.name === primary ? plusOneName : "",
+        plusOne,
         notes: notes ?? "",
       };
       const existing = index.get(m.name.toLowerCase());
