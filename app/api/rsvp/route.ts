@@ -11,7 +11,7 @@ const clean = (v?: string) => (v && v !== "—" ? v : "");
 export async function GET(req: NextRequest) {
   try {
     // Health check: reports whether the Google env vars are configured
-    // (names only — never values). Visit /api/rsvp?health=1
+    // (names only, never values). Visit /api/rsvp?health=1
     if (req.nextUrl.searchParams.get("health") === "1") {
       const required = ["GOOGLE_SERVICE_ACCOUNT_EMAIL", "GOOGLE_PRIVATE_KEY", "GOOGLE_SHEET_ID"];
       const missing = required.filter((v) => !process.env[v]);
@@ -55,7 +55,7 @@ export async function GET(req: NextRequest) {
       },
     });
   } catch {
-    // Fail open — let the form load normally if the lookup errors.
+    // Fail open: let the form load normally if the lookup errors.
     return NextResponse.json({ alreadyRsvped: false });
   }
 }

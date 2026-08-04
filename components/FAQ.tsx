@@ -1,9 +1,9 @@
-// FAQ — native <details> accordion (no client JS needed).
+// FAQ: native <details> accordion (no client JS needed).
 // TODO: confirm the placeholder answers marked below.
 const faqs: { q: string; a: string }[] = [
   {
     q: 'What does "Formal Attire" mean?',
-    a: "Formal / black-tie optional. For men, a tuxedo or a dark suit and tie. For women, a floor-length gown or an elegant formal cocktail dress. When in doubt, dress up rather than down. Our colors are black and white, but guests are welcome in any color — kindly avoid white.",
+    a: "Formal / black-tie optional. For men, a tuxedo or a dark suit and tie. For women, a floor-length gown or an elegant formal cocktail dress. When in doubt, dress up rather than down. Our colors are black and white, but guests are welcome in any color; kindly avoid white.",
   },
   {
     q: "What time should I arrive?",
@@ -11,7 +11,7 @@ const faqs: { q: string; a: string }[] = [
   },
   {
     q: "Where are the ceremony and reception held?",
-    a: "The ceremony is inside Anthony Chapel — a glass chapel among the trees at Garvan Woodland Gardens (550 Arkridge Road). Cocktails and the dinner reception are at a separate location: the Hamp Williams Building in downtown Hot Springs, a short drive away, with cocktails beginning in its courtyard.",
+    a: "The ceremony is inside Anthony Chapel, a glass chapel among the trees at Garvan Woodland Gardens (550 Arkridge Road). Cocktails and the dinner reception are at a separate location: the Hamp Williams Building in downtown Hot Springs, a short drive away, with cocktails beginning in its courtyard.",
   },
   {
     q: "Can I bring a guest or plus-one?",
@@ -19,7 +19,7 @@ const faqs: { q: string; a: string }[] = [
   },
   {
     q: "Are children welcome?",
-    a: "To allow all guests to relax and celebrate, our wedding is adults-only — unless your children are specifically named on your invitation. Thank you for understanding!",
+    a: "To allow all guests to relax and celebrate, our wedding is adults-only unless your children are specifically named on your invitation. Thank you for understanding!",
   },
   {
     q: "Where should I stay?",
@@ -27,7 +27,7 @@ const faqs: { q: string; a: string }[] = [
   },
   {
     q: "Is there parking?",
-    a: "Yes — complimentary on-site parking is available at Garvan Woodland Gardens.",
+    a: "Yes, complimentary on-site parking is available at Garvan Woodland Gardens.",
   },
 ];
 

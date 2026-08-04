@@ -47,7 +47,7 @@ export default function Travel() {
           <div className="mx-auto my-6 h-px w-16 bg-ink/30" />
         </motion.div>
 
-        {/* Driving routes — one per row, alternating sides */}
+        {/* Driving routes: one per row, alternating sides */}
         <h3 className="font-serif text-2xl text-ink font-light text-center mb-10">Driving to Hot Springs</h3>
         <div className="space-y-14">
           {routes.map((r, i) => (

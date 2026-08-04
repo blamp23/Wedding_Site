@@ -56,9 +56,9 @@ function rowValues(data: RsvpData) {
     new Date().toISOString(),
     data.name,
     data.attending,
-    data.dietary || "—",
-    data.plusOne || "—",
-    data.notes || "—",
+    data.dietary || "",
+    data.plusOne || "",
+    data.notes || "",
   ];
 }
 

@@ -25,7 +25,7 @@ const blocks: Block[] = [
     eyebrow: "Friday · Welcome Reception",
     name: "Pine Hill",
     address: ["200 Hamilton Oaks Dr", "Hot Springs, AR 71913"],
-    note: "Completely optional — come for drinks and meet the wedding party and family.",
+    note: "Completely optional. Come for drinks and meet the wedding party and family.",
     schedule: [
       ["When", "Friday, 7:00 PM"],
       ["Attire", "Casual / Business Casual"],

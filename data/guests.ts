@@ -5,7 +5,7 @@
 //   plus-one. When false/omitted, the plus-one field is hidden entirely.
 //
 // A guest can look up ANY member name to pull up the whole household.
-// (These are placeholder names — replace with the real guest list.)
+// (These are placeholder names; replace with the real guest list.)
 
 export type Household = {
   id: string;

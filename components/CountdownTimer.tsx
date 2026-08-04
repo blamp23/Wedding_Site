@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-// Wedding day — June 5, 2027, 6:00 PM ceremony at Anthony Chapel, Hot Springs, AR
+// Wedding day: June 5, 2027, 6:00 PM ceremony at Anthony Chapel, Hot Springs, AR
 const PARTY_DATE = new Date("2027-06-05T18:00:00");
 
 function getTimeLeft() {

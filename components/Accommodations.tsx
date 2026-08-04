@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 
 // TODO: confirm hotels + room-block details. These are nearby Hot Springs
-// options as placeholders — update names, distances, links, and any group
+// options as placeholders; update names, distances, links, and any group
 // rates / booking codes once arranged.
 const hotels = [
   {

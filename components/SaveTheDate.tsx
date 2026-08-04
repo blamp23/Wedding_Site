@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import Laurel from "@/components/Laurel";
 import AddToCalendar from "@/components/AddToCalendar";
 
-// Wedding day — June 5, 2027, 6:00 PM ceremony at Anthony Chapel, Hot Springs, AR
+// Wedding day: June 5, 2027, 6:00 PM ceremony at Anthony Chapel, Hot Springs, AR
 const WEDDING_DATE = new Date("2027-06-05T18:00:00");
 
 function getTimeLeft() {

@@ -64,7 +64,7 @@ export default function RSVP() {
       const res = await fetch(`/api/rsvp?householdId=${encodeURIComponent(h.id)}`);
       const data = await res.json();
       if (data.alreadyRsvped) {
-        // Already responded — surface the message right away.
+        // Already responded; surface the message right away.
         setHousehold(h);
         setExistingRsvp(data.existing);
         setStatus("alreadyRsvped");
@@ -224,7 +224,7 @@ export default function RSVP() {
                   <Row
                     key={m.name}
                     label={m.name}
-                    value={m.attending === "yes" ? "Attending" : m.attending === "no" ? "Not attending" : "—"}
+                    value={m.attending === "yes" ? "Attending" : m.attending === "no" ? "Not attending" : "TBD"}
                   />
                 ))}
                 {existingRsvp.plusOne && <Row label="Plus one" value={existingRsvp.plusOne} />}
@@ -261,7 +261,7 @@ export default function RSVP() {
               <div className="relative" ref={dropdownRef}>
                 <Label text="Your Name" />
                 <p className="mb-2 font-sans text-xs text-paper/40 italic">
-                  e.g. Sarah Fortune — not &ldquo;The Fortune Family&rdquo; or &ldquo;Dr. &amp; Mrs. Fortune&rdquo;
+                  e.g. Sarah Fortune, not &ldquo;The Fortune Family&rdquo; or &ldquo;Dr. &amp; Mrs. Fortune&rdquo;
                 </p>
                 <input
                   type="text"
@@ -303,7 +303,7 @@ export default function RSVP() {
                 <p className="font-sans text-sm text-paper/50">Looking up your party…</p>
               )}
 
-              {/* Household members — who's coming */}
+              {/* Household members: who's coming */}
               {household && !checking && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
                   <Label text="Who's coming?" />
@@ -331,7 +331,7 @@ export default function RSVP() {
                 </motion.div>
               )}
 
-              {/* Plus-one — only when the invitation allows one */}
+              {/* Plus-one: only when the invitation allows one */}
               {household?.allowPlusOne && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className="space-y-3">
                   <label className="flex items-center gap-3 cursor-pointer select-none">
@@ -362,7 +362,7 @@ export default function RSVP() {
                   <input
                     type="text"
                     value={dietary}
-                    placeholder="Anyone in your party — e.g. vegetarian, gluten-free…"
+                    placeholder="Anyone in your party, e.g. vegetarian, gluten-free…"
                     onChange={(e) => setDietary(e.target.value)}
                     className="w-full bg-transparent border-b border-paper/30 focus:border-paper py-3 font-sans text-paper placeholder:text-paper/30 outline-none transition-colors"
                   />
