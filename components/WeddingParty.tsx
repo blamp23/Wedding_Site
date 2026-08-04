@@ -10,17 +10,17 @@ type Social = { type: "linkedin" | "instagram"; url: string };
 type Member = { name: string; role?: string; bio?: string; emoji?: string; hornsDown?: boolean; socials?: Social[] };
 
 const bridesmaids: Member[] = [
-  { name: "Grace Carter", emoji: "🐗", bio: "Scary-movie enjoyer and very good at making stuffed peppers.", socials: [{ type: "linkedin", url: "https://www.linkedin.com/in/grace-carter-24a926245/" }] },
-  { name: "Rylie Reid", emoji: "🐗", bio: "Second-best medical device saleswoman at ConMed.", socials: [{ type: "linkedin", url: "https://www.linkedin.com/in/rylie-reid/" }] },
+  { name: "Grace Carter", role: "Bridesmaid", emoji: "🐗", bio: "Scary-movie enjoyer and very good at making stuffed peppers.", socials: [{ type: "linkedin", url: "https://www.linkedin.com/in/grace-carter-24a926245/" }] },
+  { name: "Rylie Reid", role: "Bridesmaid", emoji: "🐗", bio: "Second-best medical device saleswoman at ConMed.", socials: [{ type: "linkedin", url: "https://www.linkedin.com/in/rylie-reid/" }] },
 ];
 
 const groomsmen: Member[] = [
-  { name: "Matthew Lamp", hornsDown: true, bio: "Benji's baby brother. The cutest, sweetest baby boy in the whole wide world.", socials: [{ type: "linkedin", url: "https://www.linkedin.com/in/matthewlamp/" }] },
-  { name: "Jake Rose", emoji: "👍", bio: "Founding member of the Marlin Hauz, college roommate, world traveler of the United States.", socials: [{ type: "linkedin", url: "https://www.linkedin.com/in/jake-h-rose/" }] },
-  { name: "Martin Guzman", emoji: "👍", bio: "Founding member of the Marlin Hauz, college roommate, aka Party Marty.", socials: [{ type: "linkedin", url: "https://www.linkedin.com/in/martin-guzman-1133942ab/" }] },
-  { name: "Nathan Peed", emoji: "👍", bio: "Founding member of the Lobster Boyz, college neighbor, drives fast cars and slow boats.", socials: [{ type: "linkedin", url: "https://www.linkedin.com/in/nathanpeed/" }] },
-  { name: "Tyler Canty", emoji: "🚑", bio: "Founding member of the Lobster Boyz, college neighbor, really good at dancing and saving lives.", socials: [{ type: "instagram", url: "https://www.instagram.com/tylercanty9/" }] },
-  { name: "Charlie Mitchell", hornsDown: true, bio: "Mary-Kate's baby brother, an Aggie at heart." },
+  { name: "Matthew Lamp", role: "Best Man", hornsDown: true, bio: "Benji's baby brother. The cutest, sweetest baby boy in the whole wide world.", socials: [{ type: "linkedin", url: "https://www.linkedin.com/in/matthewlamp/" }] },
+  { name: "Jake Rose", role: "Groomsman", emoji: "👍", bio: "Founding member of the Marlin Hauz, college roommate, world traveler of the United States.", socials: [{ type: "linkedin", url: "https://www.linkedin.com/in/jake-h-rose/" }] },
+  { name: "Martin Guzman", role: "Groomsman", emoji: "👍", bio: "Founding member of the Marlin Hauz, college roommate, aka Party Marty.", socials: [{ type: "linkedin", url: "https://www.linkedin.com/in/martin-guzman-1133942ab/" }] },
+  { name: "Nathan Peed", role: "Groomsman", emoji: "👍", bio: "Founding member of the Lobster Boyz, college neighbor, drives fast cars and slow boats.", socials: [{ type: "linkedin", url: "https://www.linkedin.com/in/nathanpeed/" }] },
+  { name: "Tyler Canty", role: "Groomsman", emoji: "🚑", bio: "Founding member of the Lobster Boyz, college neighbor, really good at dancing and saving lives.", socials: [{ type: "instagram", url: "https://www.instagram.com/tylercanty9/" }] },
+  { name: "Charlie Mitchell", role: "Groomsman", hornsDown: true, bio: "Mary-Kate's baby brother, an Aggie at heart." },
 ];
 
 const slug = (name: string) => name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
@@ -79,14 +79,13 @@ const fadeUp = {
 };
 
 function Group({ title, subtitle, members }: { title: string; subtitle: string; members: Member[] }) {
-  const cols = members.length <= 2 ? "sm:grid-cols-2 max-w-md" : "sm:grid-cols-3 max-w-2xl";
   return (
     <div>
       <div className="text-center mb-10">
         <p className="font-sans text-xs tracking-widest uppercase text-ink-soft mb-2">{subtitle}</p>
         <h3 className="font-serif text-3xl text-ink font-light">{title}</h3>
       </div>
-      <div className={`grid grid-cols-2 ${cols} gap-x-8 gap-y-12 justify-items-center mx-auto`}>
+      <div className="space-y-10 max-w-xl mx-auto">
         {members.map((m, i) => (
           <motion.div
             key={m.name}
@@ -95,36 +94,38 @@ function Group({ title, subtitle, members }: { title: string; subtitle: string; 
             whileInView="visible"
             viewport={{ once: true, margin: "-40px" }}
             variants={fadeUp}
-            className="group w-40 text-center cursor-default"
+            className="group flex items-start gap-6"
           >
-            <div className="flex justify-center">
+            <div className="shrink-0">
               <Avatar name={m.name} />
             </div>
-            <p className="mt-4 font-serif text-lg text-ink font-light">
-              {m.name}
-              {m.emoji ? ` ${m.emoji}` : ""}
-              {m.hornsDown && <span className="inline-block ml-1 rotate-180">🤘</span>}
-            </p>
-            {m.role && (
-              <p className="font-sans text-[10px] tracking-widest uppercase text-ink-soft mt-0.5">{m.role}</p>
-            )}
-            {m.socials && (
-              <div className="mt-2 flex justify-center gap-3">
-                {m.socials.map((s) => (
-                  <a
-                    key={s.url}
-                    href={s.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={`${m.name} on ${s.type}`}
-                    className="text-ink-soft hover:text-ink transition-colors"
-                  >
-                    <SocialIcon type={s.type} />
-                  </a>
-                ))}
-              </div>
-            )}
-            {m.bio && <p className="mt-2 font-sans text-xs text-ink-soft leading-relaxed">{m.bio}</p>}
+            <div className="flex-1 min-w-0">
+              <p className="font-serif text-xl text-ink font-light">
+                {m.name}
+                {m.emoji ? ` ${m.emoji}` : ""}
+                {m.hornsDown && <span className="inline-block ml-1 rotate-180">🤘</span>}
+              </p>
+              {m.socials && (
+                <div className="mt-2 flex flex-col gap-2">
+                  {m.socials.map((s) => (
+                    <a
+                      key={s.url}
+                      href={s.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`${m.name} on ${s.type}`}
+                      className="inline-flex text-ink-soft hover:text-ink transition-colors"
+                    >
+                      <SocialIcon type={s.type} />
+                    </a>
+                  ))}
+                </div>
+              )}
+              {m.bio && <p className="mt-2 font-sans text-sm text-ink-soft leading-relaxed">{m.bio}</p>}
+              {m.role && (
+                <p className="mt-3 font-sans text-[10px] tracking-widest uppercase text-ink-soft">{m.role}</p>
+              )}
+            </div>
           </motion.div>
         ))}
       </div>
