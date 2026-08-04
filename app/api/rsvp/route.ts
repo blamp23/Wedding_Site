@@ -25,10 +25,11 @@ export async function GET(req: NextRequest) {
     // Health check: env + read access + spreadsheet title.
     if (params.get("health") === "1") {
       const missing = missingGoogleVars();
-      if (missing.length > 0) return NextResponse.json({ configured: false, missing });
+      const hasAdminToken = !!process.env.RSVP_ADMIN_TOKEN;
+      if (missing.length > 0) return NextResponse.json({ configured: false, missing, hasAdminToken });
       try {
         const [index, meta] = await Promise.all([getRsvpIndex(), getSpreadsheetMeta()]);
-        return NextResponse.json({ configured: true, canRead: true, rowCount: index.size, title: meta.title, tabs: meta.tabs });
+        return NextResponse.json({ configured: true, canRead: true, rowCount: index.size, title: meta.title, tabs: meta.tabs, hasAdminToken });
       } catch (e) {
         const msg = (e instanceof Error ? e.message : String(e)).slice(0, 180);
         return NextResponse.json({ configured: true, canRead: false, error: msg });
