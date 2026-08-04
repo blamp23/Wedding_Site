@@ -3,9 +3,8 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 
-// Headshots: drop a photo in public/images/party/<slug>.jpg (slug = the name
-// lowercased with dashes, e.g. "Grace Carter" -> grace-carter.jpg). Until a
-// photo exists, initials show automatically.
+// Headshots live in public/images/party/<slug>.png (slug = name lowercased
+// with dashes). Until a photo exists, initials show automatically.
 // The `bio` lines are playful placeholders — edit to taste!
 type Member = { name: string; role?: string; bio: string };
 
@@ -33,20 +32,21 @@ function Avatar({ name }: { name: string }) {
     .slice(0, 2)
     .join("");
 
-  if (!err) {
-    // eslint-disable-next-line @next/next/no-img-element
-    return (
-      <img
-        src={`/images/party/${slug(name)}.jpg`}
-        alt={name}
-        onError={() => setErr(true)}
-        className="h-24 w-24 rounded-full object-cover shrink-0"
-      />
-    );
-  }
   return (
-    <div className="h-24 w-24 rounded-full bg-paper-soft border border-ink/15 flex items-center justify-center shrink-0">
-      <span className="font-serif text-xl text-ink-soft">{initials}</span>
+    <div className="relative h-28 w-28 rounded-full overflow-hidden ring-1 ring-ink/10 transition-all duration-300 group-hover:ring-2 group-hover:ring-ink/50 group-hover:scale-105 group-hover:shadow-lg">
+      {!err ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={`/images/party/${slug(name)}.png`}
+          alt={name}
+          onError={() => setErr(true)}
+          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+        />
+      ) : (
+        <div className="h-full w-full bg-paper-soft flex items-center justify-center">
+          <span className="font-serif text-xl text-ink-soft">{initials}</span>
+        </div>
+      )}
     </div>
   );
 }
@@ -67,7 +67,7 @@ function Group({ title, subtitle, members }: { title: string; subtitle: string; 
         <p className="font-sans text-xs tracking-widest uppercase text-ink-soft mb-2">{subtitle}</p>
         <h3 className="font-serif text-3xl text-ink font-light">{title}</h3>
       </div>
-      <div className="grid sm:grid-cols-2 gap-x-10 gap-y-8">
+      <div className="flex flex-wrap justify-center gap-8 sm:gap-10">
         {members.map((m, i) => (
           <motion.div
             key={m.name}
@@ -76,16 +76,16 @@ function Group({ title, subtitle, members }: { title: string; subtitle: string; 
             whileInView="visible"
             viewport={{ once: true, margin: "-40px" }}
             variants={fadeUp}
-            className="flex items-center gap-5"
+            className="group w-36 text-center cursor-default"
           >
-            <Avatar name={m.name} />
-            <div>
-              <p className="font-serif text-xl text-ink font-light">{m.name}</p>
-              {m.role && (
-                <p className="font-sans text-[11px] tracking-widest uppercase text-ink-soft mt-0.5">{m.role}</p>
-              )}
-              <p className="font-sans text-sm text-ink-soft leading-relaxed mt-1.5">{m.bio}</p>
+            <div className="flex justify-center">
+              <Avatar name={m.name} />
             </div>
+            <p className="mt-4 font-serif text-lg text-ink font-light">{m.name}</p>
+            {m.role && (
+              <p className="font-sans text-[10px] tracking-widest uppercase text-ink-soft mt-0.5">{m.role}</p>
+            )}
+            <p className="mt-1.5 font-sans text-xs text-ink-soft leading-relaxed">{m.bio}</p>
           </motion.div>
         ))}
       </div>
@@ -96,7 +96,7 @@ function Group({ title, subtitle, members }: { title: string; subtitle: string; 
 export default function WeddingParty() {
   return (
     <section id="party" className="py-24 bg-paper">
-      <div className="max-w-4xl mx-auto px-6">
+      <div className="max-w-5xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
