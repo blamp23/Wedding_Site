@@ -16,11 +16,11 @@ const bridesmaids: Member[] = [
 
 const groomsmen: Member[] = [
   { name: "Matthew Lamp", hornsDown: true, bio: "Benji's right-hand man; will tell you an embarrassing story if you let him." },
-  { name: "Charlie Mitchell", hornsDown: true, bio: "Brings the energy, the snacks, and questionable dance moves." },
   { name: "Jake Rose", emoji: "👍 🐟", bio: "Professional wingman, amateur karaoke legend." },
   { name: "Martin Guzman", emoji: "👍 🐟", bio: "The calm one — until the music starts." },
-  { name: "Tyler Canty", emoji: "🐟 🚑", bio: "Will challenge you to a dance-off and lose gracefully." },
   { name: "Nathan Peed", emoji: "👍 🐟", bio: "Guaranteed to be the last one to leave the reception." },
+  { name: "Tyler Canty", emoji: "🐟 🚑", bio: "Will challenge you to a dance-off and lose gracefully." },
+  { name: "Charlie Mitchell", hornsDown: true, bio: "Brings the energy, the snacks, and questionable dance moves." },
 ];
 
 const slug = (name: string) => name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
