@@ -17,7 +17,7 @@ const bridesmaids: Member[] = [
 const groomsmen: Member[] = [
   { name: "Matthew Lamp", hornsDown: true, bio: "Benji's baby brother. The cutest, sweetest baby boy in the whole wide world.", socials: [{ type: "linkedin", url: "https://www.linkedin.com/in/matthewlamp/" }] },
   { name: "Jake Rose", emoji: "👍 🐟", bio: "Founding member of the Marlin Hauz, college roommate, world traveler of the United States.", socials: [{ type: "linkedin", url: "https://www.linkedin.com/in/jake-h-rose/" }] },
-  { name: "Martin Guzman", emoji: "👍 🐟", bio: "Founding member of the Marlin Hauz, college roommate, aka Party Marty." },
+  { name: "Martin Guzman", emoji: "👍 🐟", bio: "Founding member of the Marlin Hauz, college roommate, aka Party Marty.", socials: [{ type: "linkedin", url: "https://www.linkedin.com/in/martin-guzman-1133942ab/" }] },
   { name: "Nathan Peed", emoji: "👍 🐟", bio: "Founding member of the Lobster Boyz, college neighbor, drives fast cars and slow boats.", socials: [{ type: "linkedin", url: "https://www.linkedin.com/in/nathanpeed/" }] },
   { name: "Tyler Canty", emoji: "🐟 🚑", bio: "Founding member of the Lobster Boyz, college neighbor, really good at dancing and saving lives.", socials: [{ type: "instagram", url: "https://www.instagram.com/tylercanty9/" }] },
   { name: "Charlie Mitchell", hornsDown: true, bio: "Mary-Kate's baby brother, an Aggie at heart." },
