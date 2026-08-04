@@ -15,12 +15,12 @@ const bridesmaids: Member[] = [
 ];
 
 const groomsmen: Member[] = [
-  { name: "Matthew Lamp", hornsDown: true, bio: "Benji's right-hand man; will tell you an embarrassing story if you let him." },
-  { name: "Jake Rose", emoji: "👍 🐟", bio: "Professional wingman, amateur karaoke legend." },
-  { name: "Martin Guzman", emoji: "👍 🐟", bio: "The calm one — until the music starts." },
-  { name: "Nathan Peed", emoji: "👍 🐟", bio: "Guaranteed to be the last one to leave the reception." },
-  { name: "Tyler Canty", emoji: "🐟 🚑", bio: "Will challenge you to a dance-off and lose gracefully." },
-  { name: "Charlie Mitchell", hornsDown: true, bio: "Brings the energy, the snacks, and questionable dance moves." },
+  { name: "Matthew Lamp", hornsDown: true, bio: "Benji's baby brother and, by his own official ruling, the cutest, sweetest baby boy in the whole wide world. Please do not fact-check this." },
+  { name: "Jake Rose", emoji: "👍 🐟", bio: "Founding member of the Marlin Hauz and college roommate. Proud world traveler — of the United States. The passport stays home; the ego does not." },
+  { name: "Martin Guzman", emoji: "👍 🐟", bio: "Founding member of the Marlin Hauz and college roommate, better known as Party Marty. If the music's on, he's already on the table." },
+  { name: "Nathan Peed", emoji: "👍 🐟", bio: "Founding member of the Lobster Boyz and college neighbor. Drives fast cars and slow boats, with equal disregard for the posted limit on either." },
+  { name: "Tyler Canty", emoji: "🐟 🚑", bio: "Founding member of the Lobster Boyz and college neighbor. Alarmingly good at two things: cutting a rug and saving lives — occasionally at the same time." },
+  { name: "Charlie Mitchell", hornsDown: true, bio: "Mary-Kate's baby brother and an Aggie at heart. We love him anyway. Gig 'em, we guess." },
 ];
 
 const slug = (name: string) => name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
@@ -62,13 +62,14 @@ const fadeUp = {
 };
 
 function Group({ title, subtitle, members }: { title: string; subtitle: string; members: Member[] }) {
+  const cols = members.length <= 2 ? "sm:grid-cols-2 max-w-md" : "sm:grid-cols-3 max-w-2xl";
   return (
     <div>
       <div className="text-center mb-10">
         <p className="font-sans text-xs tracking-widest uppercase text-ink-soft mb-2">{subtitle}</p>
         <h3 className="font-serif text-3xl text-ink font-light">{title}</h3>
       </div>
-      <div className="flex flex-wrap justify-center gap-8 sm:gap-10">
+      <div className={`grid grid-cols-2 ${cols} gap-x-8 gap-y-12 justify-items-center mx-auto`}>
         {members.map((m, i) => (
           <motion.div
             key={m.name}
@@ -77,7 +78,7 @@ function Group({ title, subtitle, members }: { title: string; subtitle: string; 
             whileInView="visible"
             viewport={{ once: true, margin: "-40px" }}
             variants={fadeUp}
-            className="group w-36 text-center cursor-default"
+            className="group w-40 text-center cursor-default"
           >
             <div className="flex justify-center">
               <Avatar name={m.name} />
