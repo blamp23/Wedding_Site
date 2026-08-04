@@ -66,9 +66,9 @@ export default function Travel() {
           </div>
         </div>
 
-        {/* Driving routes */}
-        <h3 className="font-serif text-2xl text-ink font-light text-center mb-8">Driving to Hot Springs</h3>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Driving routes — one per row, alternating sides */}
+        <h3 className="font-serif text-2xl text-ink font-light text-center mb-10">Driving to Hot Springs</h3>
+        <div className="space-y-14">
           {routes.map((r, i) => (
             <motion.div
               key={r.from}
@@ -77,9 +77,11 @@ export default function Travel() {
               whileInView="visible"
               viewport={{ once: true, margin: "-40px" }}
               variants={fadeUp}
-              className="text-center"
+              className={`grid md:grid-cols-2 gap-8 items-center ${
+                i % 2 === 1 ? "md:[&>*:first-child]:order-2" : ""
+              }`}
             >
-              <div className="aspect-[4/3] overflow-hidden border border-ink/15 bg-paper-soft">
+              <div className="aspect-[16/10] overflow-hidden border border-ink/15 bg-paper-soft">
                 <iframe
                   title={`Driving route from ${r.from} to Hot Springs`}
                   src={routeSrc(r.from)}
@@ -90,8 +92,11 @@ export default function Travel() {
                   referrerPolicy="no-referrer-when-downgrade"
                 />
               </div>
-              <p className="mt-3 font-serif text-lg text-ink font-light">From {r.from}</p>
-              <p className="font-sans text-xs tracking-widest uppercase text-ink-soft">{r.time}</p>
+              <div className="text-center md:text-left">
+                <p className="font-serif text-3xl text-ink font-light">From {r.from}</p>
+                <p className="font-sans text-xs tracking-widest uppercase text-ink-soft mt-2">{r.time}</p>
+                <p className="font-sans text-sm text-ink-soft mt-3">Driving to Hot Springs, Arkansas.</p>
+              </div>
             </motion.div>
           ))}
         </div>
