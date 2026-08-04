@@ -5,12 +5,13 @@ export type RsvpData = {
   attending: string; // "Yes" | "No"
   dietary: string;
   plusOne: string;
+  emails: string;
   notes: string;
 };
 
 const TAB = "RSVPs";
-const RANGE = `${TAB}!A:F`;
-const HEADER = ["Name", "RSVP", "Dietary", "Plus One", "Notes", "Updated"];
+const RANGE = `${TAB}!A:G`;
+const HEADER = ["Name", "RSVP", "Dietary", "Plus One", "Emails", "Notes", "Updated"];
 
 function getAuth() {
   return new google.auth.GoogleAuth({
@@ -63,7 +64,8 @@ export async function getRsvpIndex(): Promise<Map<string, { rowIndex: number; da
         attending: rows[i][1] ?? "",
         dietary: rows[i][2] ?? "",
         plusOne: rows[i][3] ?? "",
-        notes: rows[i][4] ?? "",
+        emails: rows[i][4] ?? "",
+        notes: rows[i][5] ?? "",
       },
     });
   }
@@ -71,7 +73,7 @@ export async function getRsvpIndex(): Promise<Map<string, { rowIndex: number; da
 }
 
 function rowValues(data: RsvpData) {
-  return [data.name, data.attending, data.dietary, data.plusOne, data.notes, new Date().toISOString()];
+  return [data.name, data.attending, data.dietary, data.plusOne, data.emails, data.notes, new Date().toISOString()];
 }
 
 export async function appendRsvpRow(data: RsvpData) {
@@ -88,7 +90,7 @@ export async function updateRsvpRow(rowIndex: number, data: RsvpData) {
   const sheets = sheetsClient();
   await sheets.spreadsheets.values.update({
     spreadsheetId: process.env.GOOGLE_SHEET_ID,
-    range: `${TAB}!A${rowIndex}:F${rowIndex}`,
+    range: `${TAB}!A${rowIndex}:G${rowIndex}`,
     valueInputOption: "USER_ENTERED",
     requestBody: { values: [rowValues(data)] },
   });
@@ -121,6 +123,7 @@ export async function seedRoster(names: string[]): Promise<{ count: number; form
       responded ? ex!.data.attending : "Pending",
       ex?.data.dietary ?? "",
       ex?.data.plusOne ?? "",
+      ex?.data.emails ?? "",
       ex?.data.notes ?? "",
       responded ? new Date().toISOString() : "",
     ];

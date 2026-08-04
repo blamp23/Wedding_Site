@@ -67,6 +67,41 @@ export const households: Household[] = [
   { id: "rositas", members: [
     { name: "Juan Carlos Rositas" },
   ] },
+  { id: "resser", members: [
+    { name: "Drew Resser", plusOne: true },
+  ] },
+  { id: "alex", members: [
+    { name: "Rachel Alex", plusOne: true },
+  ] },
+  { id: "salazar", members: [
+    { name: "Daniel Salazar", plusOne: true },
+  ] },
+  { id: "luna", members: [
+    { name: "Yeciel Luna", plusOne: true },
+  ] },
+  { id: "villaruel", members: [
+    { name: "Hayley Villaruel", plusOne: true },
+    { name: "Sydney Villaruel", plusOne: true },
+  ] },
+  { id: "dolberry", members: [
+    { name: "Katie Dolberry", plusOne: true },
+    { name: "Les Dolberry" },
+    { name: "Julia Dolberry" },
+  ] },
+  { id: "bowen", members: [
+    { name: "Mike Bowen" },
+    { name: "Mardi Bowen" },
+    { name: "Drew Bowen", plusOne: true },
+  ] },
+  { id: "anderson", members: [
+    { name: "Robin Anderson" },
+    { name: "Wade Anderson" },
+  ] },
+  { id: "salmon", members: [
+    { name: "Steve Salmon" },
+    { name: "Nita Salmon" },
+    { name: "Gracie Salmon" },
+  ] },
 ];
 
 export function findHousehold(name: string): Household | undefined {

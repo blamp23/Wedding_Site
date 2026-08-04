@@ -69,6 +69,7 @@ export async function GET(req: NextRequest) {
           return { name: m.name, attending: norm(e?.data.attending), plusOne: clean(e?.data.plusOne) };
         }),
         dietary: clean(firstExisting?.data.dietary),
+        emails: clean(firstExisting?.data.emails),
         notes: clean(firstExisting?.data.notes),
       },
     });
@@ -80,13 +81,18 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { householdId, members, dietary, notes, overwrite } = body as {
+    const { householdId, members, dietary, emails, notes, overwrite } = body as {
       householdId?: string;
       members?: MemberResponse[];
       dietary?: string;
+      emails?: string[];
       notes?: string;
       overwrite?: string;
     };
+
+    const emailStr = Array.isArray(emails)
+      ? emails.map((e) => e.trim()).filter(Boolean).join(", ")
+      : "";
 
     const household = households.find((h) => h.id === householdId);
     if (!household) {
@@ -128,6 +134,7 @@ export async function POST(req: NextRequest) {
             return { name: m.name, attending: norm(e?.data.attending), plusOne: clean(e?.data.plusOne) };
           }),
           dietary: clean(firstExisting?.data.dietary),
+          emails: clean(firstExisting?.data.emails),
           notes: clean(firstExisting?.data.notes),
         },
       });
@@ -141,6 +148,7 @@ export async function POST(req: NextRequest) {
         attending: m.attending === "yes" ? "Yes" : "No",
         dietary: dietary ?? "",
         plusOne: guest?.plusOne ? (m.plusOne ?? "").trim() : "",
+        emails: emailStr,
         notes: notes ?? "",
       };
       const existing = index.get(m.name.toLowerCase());

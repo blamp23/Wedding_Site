@@ -7,7 +7,7 @@ import { households, findHousehold, type Household } from "@/data/guests";
 type Status = "idle" | "submitting" | "success" | "error" | "alreadyRsvped";
 
 type ExistingMember = { name: string; attending: string; plusOne: string };
-type ExistingRsvp = { members: ExistingMember[]; dietary: string; notes: string };
+type ExistingRsvp = { members: ExistingMember[]; dietary: string; emails: string; notes: string };
 
 const allNames = households.flatMap((h) => h.members.map((m) => m.name));
 
@@ -23,6 +23,7 @@ export default function RSVP() {
   const [plusOneOn, setPlusOneOn] = useState<Record<string, boolean>>({});
   const [plusOneNames, setPlusOneNames] = useState<Record<string, string>>({});
   const [dietary, setDietary] = useState("");
+  const [emails, setEmails] = useState<string[]>([""]);
   const [notes, setNotes] = useState("");
   const [status, setStatus] = useState<Status>("idle");
   const [errorMsg, setErrorMsg] = useState("");
@@ -59,6 +60,7 @@ export default function RSVP() {
       setAttendance(Object.fromEntries(h.members.map((m) => [m.name, true])));
       setPlusOneOn({});
       setPlusOneNames({});
+      setEmails([""]);
     };
 
     try {
@@ -95,6 +97,7 @@ export default function RSVP() {
     setPlusOneOn({});
     setPlusOneNames({});
     setDietary("");
+    setEmails([""]);
     setNotes("");
     setStatus("idle");
     setErrorMsg("");
@@ -107,6 +110,8 @@ export default function RSVP() {
     setPlusOneOn(Object.fromEntries(existing.members.filter((m) => m.plusOne).map((m) => [m.name, true])));
     setPlusOneNames(Object.fromEntries(existing.members.filter((m) => m.plusOne).map((m) => [m.name, m.plusOne])));
     setDietary(existing.dietary);
+    const priorEmails = existing.emails ? existing.emails.split(/,\s*/).filter(Boolean) : [];
+    setEmails(priorEmails.length ? priorEmails : [""]);
     setNotes(existing.notes);
     setExistingRsvp(null);
     setIsUpdating(true);
@@ -130,6 +135,7 @@ export default function RSVP() {
             plusOne: m.plusOne && plusOneOn[m.name] ? plusOneNames[m.name] ?? "" : "",
           })),
           dietary,
+          emails: emails.map((x) => x.trim()).filter(Boolean),
           notes,
           overwrite: overwrite ? "true" : "false",
         }),
@@ -368,6 +374,42 @@ export default function RSVP() {
                     onChange={(e) => setDietary(e.target.value)}
                     className="w-full bg-transparent border-b border-paper/30 focus:border-paper py-3 font-sans text-paper placeholder:text-paper/30 outline-none transition-colors"
                   />
+                </motion.div>
+              )}
+
+              {household && !checking && (
+                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
+                  <Label text="Email(s)" />
+                  <div className="space-y-2">
+                    {emails.map((email, i) => (
+                      <div key={i} className="flex items-center gap-2">
+                        <input
+                          type="email"
+                          value={email}
+                          placeholder="you@example.com"
+                          onChange={(e) => setEmails((list) => list.map((v, idx) => (idx === i ? e.target.value : v)))}
+                          className="flex-1 bg-transparent border-b border-paper/30 focus:border-paper py-2 font-sans text-paper placeholder:text-paper/30 outline-none transition-colors"
+                        />
+                        {emails.length > 1 && (
+                          <button
+                            type="button"
+                            aria-label="Remove email"
+                            onClick={() => setEmails((list) => list.filter((_, idx) => idx !== i))}
+                            className="text-paper/40 hover:text-paper text-xl leading-none px-1"
+                          >
+                            &times;
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setEmails((list) => [...list, ""])}
+                    className="mt-2 font-sans text-xs tracking-widest uppercase text-paper/60 hover:text-paper transition-colors"
+                  >
+                    + Add another email
+                  </button>
                 </motion.div>
               )}
 
