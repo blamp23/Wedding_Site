@@ -100,14 +100,12 @@ function Group({ title, subtitle, members }: { title: string; subtitle: string; 
               <Avatar name={m.name} />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="font-serif text-xl text-ink font-light">
-                {m.name}
-                {m.emoji ? ` ${m.emoji}` : ""}
-                {m.hornsDown && <span className="inline-block ml-1 rotate-180">🤘</span>}
-              </p>
-              {m.socials && (
-                <div className="mt-2 flex gap-3">
-                  {m.socials.map((s) => (
+              <p className="font-serif text-xl text-ink font-light">{m.name}</p>
+              {(m.emoji || m.hornsDown || m.socials) && (
+                <div className="mt-2 flex items-center gap-3">
+                  {m.emoji && <span>{m.emoji}</span>}
+                  {m.hornsDown && <span className="inline-block rotate-180">🤘</span>}
+                  {m.socials?.map((s) => (
                     <a
                       key={s.url}
                       href={s.url}
