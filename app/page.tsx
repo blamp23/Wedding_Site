@@ -4,6 +4,7 @@ import Slideshow from "@/components/Slideshow";
 
 const menu = [
   { label: "Venue & Schedule", href: "/venue" },
+  { label: "Wedding Party", href: "/party" },
   { label: "Accommodations", href: "/accommodations" },
   { label: "RSVP", href: "/rsvp" },
   { label: "FAQ", href: "/faq" },

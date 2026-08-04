@@ -10,11 +10,6 @@ const airports = [
     drive: "~1 hr drive to Hot Springs (55 mi)",
   },
   {
-    name: "Hot Springs — Memorial Field (HOT)",
-    detail: "Small regional airport; limited flights, but the closest option.",
-    drive: "~15 min drive",
-  },
-  {
     name: "Dallas–Fort Worth (DFW)",
     detail: "Large hub if you'd rather fly into Texas and drive up.",
     drive: "~5 hr drive to Hot Springs",
