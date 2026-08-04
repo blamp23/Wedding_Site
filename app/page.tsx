@@ -4,11 +4,11 @@ import Slideshow from "@/components/Slideshow";
 
 const menu = [
   { label: "Venue & Schedule", href: "/venue" },
-  { label: "Wedding Party", href: "/party" },
   { label: "Accommodations", href: "/accommodations" },
-  { label: "RSVP", href: "/rsvp" },
-  { label: "FAQ", href: "/faq" },
   { label: "Registry", href: "/registry" },
+  { label: "Wedding Party", href: "/party" },
+  { label: "FAQ", href: "/faq" },
+  { label: "RSVP", href: "/rsvp" },
 ];
 
 export default function Home() {
@@ -23,16 +23,35 @@ export default function Home() {
           <Slideshow />
 
           <nav className="grid grid-cols-2 gap-3">
-            {menu.map(({ label, href }) => (
-              <Link
-                key={href}
-                href={href}
-                className="group flex items-center justify-between gap-2 border border-ink/15 bg-paper px-4 py-3 hover:border-ink transition-colors duration-300"
-              >
-                <span className="font-sans text-xs tracking-widest uppercase text-ink">{label}</span>
-                <span className="font-sans text-ink-faint group-hover:text-ink transition-colors">→</span>
-              </Link>
-            ))}
+            {menu.map(({ label, href }) => {
+              const isRsvp = href === "/rsvp";
+              return (
+                <Link
+                  key={href}
+                  href={href}
+                  className={`group flex items-center justify-between gap-2 px-4 py-3 transition-colors duration-300 ${
+                    isRsvp
+                      ? "bg-ink border border-ink hover:opacity-90"
+                      : "border border-ink/15 bg-paper hover:border-ink"
+                  }`}
+                >
+                  <span
+                    className={`font-sans text-xs tracking-widest uppercase ${
+                      isRsvp ? "text-paper" : "text-ink"
+                    }`}
+                  >
+                    {label}
+                  </span>
+                  <span
+                    className={`font-sans transition-colors ${
+                      isRsvp ? "text-paper" : "text-ink-faint group-hover:text-ink"
+                    }`}
+                  >
+                    →
+                  </span>
+                </Link>
+              );
+            })}
           </nav>
         </div>
       </div>
