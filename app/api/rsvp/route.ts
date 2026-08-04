@@ -10,6 +10,14 @@ const clean = (v?: string) => (v && v !== "—" ? v : "");
 // "you've already RSVP'd" message as soon as a name is selected.
 export async function GET(req: NextRequest) {
   try {
+    // Health check: reports whether the Google env vars are configured
+    // (names only — never values). Visit /api/rsvp?health=1
+    if (req.nextUrl.searchParams.get("health") === "1") {
+      const required = ["GOOGLE_SERVICE_ACCOUNT_EMAIL", "GOOGLE_PRIVATE_KEY", "GOOGLE_SHEET_ID"];
+      const missing = required.filter((v) => !process.env[v]);
+      return NextResponse.json({ configured: missing.length === 0, missing });
+    }
+
     const householdId = req.nextUrl.searchParams.get("householdId");
     const household = households.find((h) => h.id === householdId);
     if (!household) return NextResponse.json({ alreadyRsvped: false });
