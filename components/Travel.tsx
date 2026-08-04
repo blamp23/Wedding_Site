@@ -4,38 +4,43 @@ import { motion } from "framer-motion";
 
 // Approximate — verify/adjust as needed.
 const airports = [
-  {
-    name: "Little Rock — Clinton National (LIT)",
-    detail: "Closest major airport with full commercial service.",
-    drive: "~1 hr drive to Hot Springs (55 mi)",
-  },
-  {
-    name: "Dallas–Fort Worth (DFW)",
-    detail: "Large hub if you'd rather fly into Texas and drive up.",
-    drive: "~5 hr drive to Hot Springs",
-  },
+  { name: "Little Rock — Clinton National (LIT)", detail: "Closest major airport; about a 1 hour drive to Hot Springs (55 mi)." },
+  { name: "Dallas–Fort Worth (DFW)", detail: "Large hub if you'd rather fly into Texas and drive up (~5 hr)." },
 ];
 
-const drives = [
-  { from: "Little Rock, AR", time: "~1 hour" },
-  { from: "Dallas, TX", time: "~5 hours" },
-  { from: "Houston, TX", time: "~7 hours" },
+// Legacy embed renders the driving route without an API key.
+const routes = [
+  {
+    from: "Little Rock, AR",
+    time: "~1 hour · 55 mi",
+    src: "https://maps.google.com/maps?saddr=Little+Rock,+AR&daddr=Hot+Springs,+AR&output=embed",
+  },
+  {
+    from: "Dallas, TX",
+    time: "~5 hours · 290 mi",
+    src: "https://maps.google.com/maps?saddr=Dallas,+TX&daddr=Hot+Springs,+AR&output=embed",
+  },
+  {
+    from: "Houston, TX",
+    time: "~7 hours · 430 mi",
+    src: "https://maps.google.com/maps?saddr=Houston,+TX&daddr=Hot+Springs,+AR&output=embed",
+  },
 ];
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.7 } },
+  visible: (i: number) => ({ opacity: 1, y: 0, transition: { duration: 0.6, delay: i * 0.08 } }),
 };
 
 export default function Travel() {
   return (
     <section id="travel" className="py-24 bg-paper">
-      <div className="max-w-4xl mx-auto px-6">
+      <div className="max-w-5xl mx-auto px-6">
         <motion.div
-          initial="hidden"
-          whileInView="visible"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
-          variants={fadeUp}
+          transition={{ duration: 0.7 }}
           className="text-center mb-14"
         >
           <p className="font-sans text-xs tracking-widest uppercase text-ink-soft mb-3">Getting here</p>
@@ -43,48 +48,47 @@ export default function Travel() {
           <div className="mx-auto my-6 h-px w-16 bg-ink/30" />
         </motion.div>
 
-        <div className="grid md:grid-cols-2 gap-12">
-          {/* By air */}
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-60px" }}
-            variants={fadeUp}
-          >
-            <h3 className="font-serif text-2xl text-ink font-light mb-1">By Air</h3>
-            <div className="w-8 h-px bg-ink/40 mb-6" />
-            <div className="space-y-6">
-              {airports.map((a) => (
-                <div key={a.name}>
-                  <p className="font-serif text-lg text-ink font-light">{a.name}</p>
-                  <p className="font-sans text-sm text-ink-soft leading-relaxed">{a.detail}</p>
-                  <p className="font-sans text-xs tracking-widest uppercase text-ink-faint mt-1">{a.drive}</p>
-                </div>
-              ))}
-            </div>
-          </motion.div>
+        {/* Flying in */}
+        <div className="max-w-2xl mx-auto text-center mb-16">
+          <h3 className="font-serif text-2xl text-ink font-light mb-6">Flying In</h3>
+          <div className="space-y-4">
+            {airports.map((a) => (
+              <div key={a.name}>
+                <p className="font-serif text-lg text-ink font-light">{a.name}</p>
+                <p className="font-sans text-sm text-ink-soft">{a.detail}</p>
+              </div>
+            ))}
+          </div>
+        </div>
 
-          {/* By car */}
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-60px" }}
-            variants={fadeUp}
-          >
-            <h3 className="font-serif text-2xl text-ink font-light mb-1">By Car</h3>
-            <div className="w-8 h-px bg-ink/40 mb-6" />
-            <p className="font-sans text-sm text-ink-soft mb-6">
-              Approximate driving times to Hot Springs:
-            </p>
-            <div className="divide-y divide-ink/10 border-y border-ink/10">
-              {drives.map((d) => (
-                <div key={d.from} className="flex items-center justify-between py-3.5">
-                  <span className="font-sans text-ink">{d.from}</span>
-                  <span className="font-sans text-sm text-ink-soft">{d.time}</span>
-                </div>
-              ))}
-            </div>
-          </motion.div>
+        {/* Driving routes */}
+        <h3 className="font-serif text-2xl text-ink font-light text-center mb-8">Driving to Hot Springs</h3>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {routes.map((r, i) => (
+            <motion.div
+              key={r.from}
+              custom={i}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-40px" }}
+              variants={fadeUp}
+              className="text-center"
+            >
+              <div className="aspect-[4/3] overflow-hidden border border-ink/15 bg-paper-soft">
+                <iframe
+                  title={`Driving route from ${r.from} to Hot Springs`}
+                  src={r.src}
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+              </div>
+              <p className="mt-3 font-serif text-lg text-ink font-light">From {r.from}</p>
+              <p className="font-sans text-xs tracking-widest uppercase text-ink-soft">{r.time}</p>
+            </motion.div>
+          ))}
         </div>
       </div>
     </section>
