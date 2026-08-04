@@ -1,18 +1,30 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getRsvpIndex, getSpreadsheetMeta, appendRsvpRow, updateRsvpRow, type RsvpData } from "@/lib/sheets";
-import { households } from "@/data/guests";
+import {
+  getRsvpIndex,
+  getSpreadsheetMeta,
+  appendRsvpRow,
+  updateRsvpRow,
+  seedRoster,
+  type RsvpData,
+} from "@/lib/sheets";
+import { households, allInvitedNames } from "@/data/guests";
 
 type MemberResponse = { name: string; attending: "yes" | "no"; plusOne?: string };
 
 const clean = (v?: string) => (v && v !== "—" ? v : "");
+const responded = (status?: string) => status === "Yes" || status === "No";
+const norm = (status?: string) => (status === "Yes" ? "yes" : status === "No" ? "no" : "");
 
-// Read-only lookup: has this household already responded? Also serves a
-// health check (?health=1) reporting whether the Google env vars are set.
+const GOOGLE_VARS = ["GOOGLE_SERVICE_ACCOUNT_EMAIL", "GOOGLE_PRIVATE_KEY", "GOOGLE_SHEET_ID"];
+const missingGoogleVars = () => GOOGLE_VARS.filter((v) => !process.env[v]);
+
 export async function GET(req: NextRequest) {
   try {
-    if (req.nextUrl.searchParams.get("health") === "1") {
-      const required = ["GOOGLE_SERVICE_ACCOUNT_EMAIL", "GOOGLE_PRIVATE_KEY", "GOOGLE_SHEET_ID"];
-      const missing = required.filter((v) => !process.env[v]);
+    const params = req.nextUrl.searchParams;
+
+    // Health check: env + read access + spreadsheet title.
+    if (params.get("health") === "1") {
+      const missing = missingGoogleVars();
       if (missing.length > 0) return NextResponse.json({ configured: false, missing });
       try {
         const [index, meta] = await Promise.all([getRsvpIndex(), getSpreadsheetMeta()]);
@@ -23,35 +35,43 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    const householdId = req.nextUrl.searchParams.get("householdId");
+    // Seed/rebuild the roster from the guest list (token-protected).
+    if (params.get("seed") === "1") {
+      const token = params.get("token");
+      if (!process.env.RSVP_ADMIN_TOKEN || token !== process.env.RSVP_ADMIN_TOKEN) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
+      if (missingGoogleVars().length > 0) {
+        return NextResponse.json({ error: "Google Sheets not configured." }, { status: 500 });
+      }
+      const result = await seedRoster(allInvitedNames());
+      return NextResponse.json({ seeded: result.count, formatted: result.formatted });
+    }
+
+    // Lookup: has this household already responded?
+    const householdId = params.get("householdId");
     const household = households.find((h) => h.id === householdId);
     if (!household) return NextResponse.json({ alreadyRsvped: false });
-
-    const missingVars = ["GOOGLE_SERVICE_ACCOUNT_EMAIL", "GOOGLE_PRIVATE_KEY", "GOOGLE_SHEET_ID"].filter(
-      (v) => !process.env[v]
-    );
-    if (missingVars.length > 0) return NextResponse.json({ alreadyRsvped: false });
+    if (missingGoogleVars().length > 0) return NextResponse.json({ alreadyRsvped: false });
 
     const index = await getRsvpIndex();
-    const anyExisting = household.members.some((m) => index.has(m.name.toLowerCase()));
-    if (!anyExisting) return NextResponse.json({ alreadyRsvped: false });
+    const anyResponded = household.members.some((m) => responded(index.get(m.name.toLowerCase())?.data.attending));
+    if (!anyResponded) return NextResponse.json({ alreadyRsvped: false });
 
     const rows = household.members.map((m) => index.get(m.name.toLowerCase()));
     const firstExisting = rows.find(Boolean);
-
     return NextResponse.json({
       alreadyRsvped: true,
       existing: {
         members: household.members.map((m) => {
           const e = index.get(m.name.toLowerCase());
-          return { name: m.name, attending: e?.data.attending ?? "", plusOne: clean(e?.data.plusOne) };
+          return { name: m.name, attending: norm(e?.data.attending), plusOne: clean(e?.data.plusOne) };
         }),
         dietary: clean(firstExisting?.data.dietary),
         notes: clean(firstExisting?.data.notes),
       },
     });
   } catch {
-    // Fail open: let the form load normally if the lookup errors.
     return NextResponse.json({ alreadyRsvped: false });
   }
 }
@@ -79,36 +99,32 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "No guests provided." }, { status: 400 });
     }
 
-    // Every submitted name must belong to this household.
     const byName = new Map(household.members.map((m) => [m.name.toLowerCase(), m]));
-    const allValid = members.every((m) => m?.name && byName.has(m.name.toLowerCase()));
-    if (!allValid) {
+    if (!members.every((m) => m?.name && byName.has(m.name.toLowerCase()))) {
       return NextResponse.json({ error: "Guest list mismatch." }, { status: 400 });
     }
 
-    const missingVars = ["GOOGLE_SERVICE_ACCOUNT_EMAIL", "GOOGLE_PRIVATE_KEY", "GOOGLE_SHEET_ID"].filter(
-      (v) => !process.env[v]
-    );
-    if (missingVars.length > 0) {
-      console.error("RSVP: missing env vars:", missingVars.join(", "));
+    const missing = missingGoogleVars();
+    if (missing.length > 0) {
+      console.error("RSVP: missing env vars:", missing.join(", "));
       return NextResponse.json(
-        { error: `Server misconfiguration: missing ${missingVars.join(", ")}.` },
+        { error: `Server misconfiguration: missing ${missing.join(", ")}.` },
         { status: 500 }
       );
     }
 
     const index = await getRsvpIndex();
 
-    // If anyone in the household has already responded, ask before overwriting.
-    const anyExisting = members.some((m) => index.has(m.name.toLowerCase()));
-    if (anyExisting && overwrite !== "true") {
+    // If anyone in the household has already responded, confirm before overwriting.
+    const anyResponded = members.some((m) => responded(index.get(m.name.toLowerCase())?.data.attending));
+    if (anyResponded && overwrite !== "true") {
       const firstExisting = members.map((m) => index.get(m.name.toLowerCase())).find(Boolean);
       return NextResponse.json({
         alreadyRsvped: true,
         existing: {
           members: members.map((m) => {
             const e = index.get(m.name.toLowerCase());
-            return { name: m.name, attending: e?.data.attending ?? "", plusOne: clean(e?.data.plusOne) };
+            return { name: m.name, attending: norm(e?.data.attending), plusOne: clean(e?.data.plusOne) };
           }),
           dietary: clean(firstExisting?.data.dietary),
           notes: clean(firstExisting?.data.notes),
@@ -116,16 +132,14 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // Upsert one row per member; a plus-one is honored only if that member is
-    // flagged for one in the guest list.
+    // Update each member's roster row (append if they weren't seeded).
     for (const m of members) {
       const guest = byName.get(m.name.toLowerCase());
-      const plusOne = guest?.plusOne ? (m.plusOne ?? "").trim() : "";
       const data: RsvpData = {
         name: m.name,
-        attending: m.attending === "yes" ? "yes" : "no",
+        attending: m.attending === "yes" ? "Yes" : "No",
         dietary: dietary ?? "",
-        plusOne,
+        plusOne: guest?.plusOne ? (m.plusOne ?? "").trim() : "",
         notes: notes ?? "",
       };
       const existing = index.get(m.name.toLowerCase());
