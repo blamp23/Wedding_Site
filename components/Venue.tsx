@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import AddToCalendar from "@/components/AddToCalendar";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -69,6 +70,9 @@ export default function Venue() {
           <p className="font-sans text-ink-soft text-sm">
             Saturday, June 5, 2027 · Formal Attire
           </p>
+          <div className="mt-6 flex justify-center">
+            <AddToCalendar />
+          </div>
         </motion.div>
 
         <div className="space-y-16">

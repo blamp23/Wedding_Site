@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Laurel from "@/components/Laurel";
+import AddToCalendar from "@/components/AddToCalendar";
 
 // Wedding day — June 5, 2027, 6:00 PM ceremony at Anthony Chapel, Hot Springs, AR
 const WEDDING_DATE = new Date("2027-06-05T18:00:00");
@@ -123,12 +124,22 @@ export default function SaveTheDate() {
         ))}
       </motion.div>
 
-      <motion.p
+      <motion.div
         custom={5}
         initial="hidden"
         animate="show"
         variants={fade}
-        className="mt-10 font-sans text-[11px] tracking-[0.3em] uppercase text-ink-faint"
+        className="mt-8 flex justify-center md:justify-start"
+      >
+        <AddToCalendar />
+      </motion.div>
+
+      <motion.p
+        custom={6}
+        initial="hidden"
+        animate="show"
+        variants={fade}
+        className="mt-8 font-sans text-[11px] tracking-[0.3em] uppercase text-ink-faint"
       >
         Formal invitation to follow
       </motion.p>
