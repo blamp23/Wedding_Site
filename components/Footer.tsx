@@ -3,7 +3,7 @@ export default function Footer() {
     <footer className="bg-ink py-14 text-center">
       {/* Monogram */}
       <div className="w-16 h-16 mx-auto mb-6 rounded-full border border-paper/30 flex items-center justify-center">
-        <span className="font-serif text-xl text-paper font-light">M&amp;B</span>
+        <span className="font-serif text-lg text-paper font-light">MK&amp;B</span>
       </div>
 
       <p className="font-serif text-2xl text-paper font-light mb-2">
