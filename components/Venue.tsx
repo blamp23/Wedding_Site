@@ -8,15 +8,8 @@ const fadeUp = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.7 } },
 };
 
-const GARVAN_EMBED =
-  "https://www.google.com/maps?q=Garvan%20Woodland%20Gardens%2C%20550%20Arkridge%20Rd%2C%20Hot%20Springs%2C%20AR%2071913&output=embed";
-const GARVAN_DIRECTIONS =
-  "https://www.google.com/maps/dir/?api=1&destination=Garvan+Woodland+Gardens%2C+550+Arkridge+Rd%2C+Hot+Springs%2C+AR+71913";
-
-const HAMP_EMBED =
-  "https://www.google.com/maps?q=Hamp%20Williams%20Building%2C%20Hot%20Springs%2C%20AR&output=embed";
-const HAMP_DIRECTIONS =
-  "https://www.google.com/maps/dir/?api=1&destination=Hamp+Williams+Building%2C+Hot+Springs%2C+AR";
+const embed = (q: string) => `https://www.google.com/maps?q=${encodeURIComponent(q)}&output=embed`;
+const directions = (q: string) => `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(q)}`;
 
 type Block = {
   eyebrow: string;
@@ -24,22 +17,33 @@ type Block = {
   address: string[];
   note?: string;
   schedule: [string, string][];
-  mapEmbed: string;
-  directions: string;
-  reverse?: boolean;
+  query: string;
 };
 
 const blocks: Block[] = [
   {
-    eyebrow: "The Ceremony",
-    name: "Anthony Chapel at Garvan Woodland Gardens",
-    address: ["550 Arkridge Road", "Hot Springs, AR 71913"],
-    schedule: [["Ceremony", "6:00 PM"]],
-    mapEmbed: GARVAN_EMBED,
-    directions: GARVAN_DIRECTIONS,
+    eyebrow: "Friday · Welcome Reception",
+    name: "Pine Hill",
+    address: ["200 Hamilton Oaks Dr", "Hot Springs, AR 71913"],
+    note: "Completely optional — come for drinks and meet the wedding party and family.",
+    schedule: [
+      ["When", "Friday, 7:00 PM"],
+      ["Attire", "Casual / Business Casual"],
+    ],
+    query: "200 Hamilton Oaks Dr, Hot Springs, AR 71913",
   },
   {
-    eyebrow: "Cocktails & Reception",
+    eyebrow: "Saturday · The Ceremony",
+    name: "Anthony Chapel at Garvan Woodland Gardens",
+    address: ["550 Arkridge Road", "Hot Springs, AR 71913"],
+    schedule: [
+      ["Ceremony", "6:00 PM"],
+      ["Attire", "Formal"],
+    ],
+    query: "Garvan Woodland Gardens, 550 Arkridge Rd, Hot Springs, AR 71913",
+  },
+  {
+    eyebrow: "Saturday · Cocktails & Reception",
     name: "The Hamp Williams Building",
     address: ["Downtown Hot Springs, Arkansas"],
     note: "A short drive from the gardens.",
@@ -47,9 +51,7 @@ const blocks: Block[] = [
       ["Cocktails", "7:30 PM · Courtyard"],
       ["Dinner & Reception", "8:30 PM"],
     ],
-    mapEmbed: HAMP_EMBED,
-    directions: HAMP_DIRECTIONS,
-    reverse: true,
+    query: "Hamp Williams Building, Hot Springs, AR",
   },
 ];
 
@@ -65,22 +67,20 @@ export default function Venue() {
           className="text-center mb-14"
         >
           <p className="font-sans text-xs tracking-widest uppercase text-ink-soft mb-3">Join us</p>
-          <h2 className="font-serif text-5xl text-ink font-light">Ceremony &amp; Reception</h2>
+          <h2 className="font-serif text-5xl text-ink font-light">The Weekend</h2>
           <div className="mx-auto my-6 h-px w-16 bg-ink/30" />
-          <p className="font-sans text-ink-soft text-sm">
-            Saturday, June 5, 2027 · Formal Attire
-          </p>
+          <p className="font-sans text-ink-soft text-sm">June 4–5, 2027 · Hot Springs, Arkansas</p>
           <div className="mt-6 flex justify-center">
             <AddToCalendar />
           </div>
         </motion.div>
 
         <div className="space-y-16">
-          {blocks.map((b) => (
+          {blocks.map((b, i) => (
             <div
               key={b.name}
               className={`grid md:grid-cols-2 gap-10 items-center ${
-                b.reverse ? "md:[&>*:first-child]:order-2" : ""
+                i % 2 === 1 ? "md:[&>*:first-child]:order-2" : ""
               }`}
             >
               <motion.div
@@ -91,9 +91,7 @@ export default function Venue() {
                 className="space-y-5"
               >
                 <div>
-                  <p className="font-sans text-xs tracking-widest uppercase text-ink-soft mb-2">
-                    {b.eyebrow}
-                  </p>
+                  <p className="font-sans text-xs tracking-widest uppercase text-ink-soft mb-2">{b.eyebrow}</p>
                   <h3 className="font-serif text-2xl text-ink font-light mb-2">{b.name}</h3>
                   <div className="w-8 h-px bg-ink/40 mb-4" />
                   <address className="font-sans not-italic text-ink-soft leading-relaxed space-y-1">
@@ -107,7 +105,7 @@ export default function Venue() {
                 <div className="space-y-3">
                   {b.schedule.map(([label, value]) => (
                     <div key={label} className="flex gap-4">
-                      <span className="font-sans text-xs tracking-widest uppercase text-ink-soft w-24 shrink-0 pt-0.5">
+                      <span className="font-sans text-xs tracking-widest uppercase text-ink-soft w-32 shrink-0 pt-0.5">
                         {label}
                       </span>
                       <span className="font-sans text-ink">{value}</span>
@@ -116,7 +114,7 @@ export default function Venue() {
                 </div>
 
                 <div className="pt-1">
-                  <a href={b.directions} target="_blank" rel="noopener noreferrer" className="btn-outline">
+                  <a href={directions(b.query)} target="_blank" rel="noopener noreferrer" className="btn-outline">
                     Get Directions
                   </a>
                 </div>
@@ -131,7 +129,7 @@ export default function Venue() {
               >
                 <iframe
                   title={`${b.name} map`}
-                  src={b.mapEmbed}
+                  src={embed(b.query)}
                   width="100%"
                   height="100%"
                   style={{ border: 0 }}
