@@ -45,8 +45,10 @@ export const households: Household[] = [
   ] },
   { id: "escamilla", members: [
     { name: "Graciella Escamilla" },
-    { name: "Sonny Dominguez" },
     { name: "Roy Escamilla" },
+  ] },
+  { id: "dominguez", members: [
+    { name: "Sonny Dominguez" },
   ] },
   { id: "perlman", members: [
     { name: "Julie Perlman" },
