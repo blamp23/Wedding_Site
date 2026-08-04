@@ -15,7 +15,14 @@ export async function GET(req: NextRequest) {
     if (req.nextUrl.searchParams.get("health") === "1") {
       const required = ["GOOGLE_SERVICE_ACCOUNT_EMAIL", "GOOGLE_PRIVATE_KEY", "GOOGLE_SHEET_ID"];
       const missing = required.filter((v) => !process.env[v]);
-      return NextResponse.json({ configured: missing.length === 0, missing });
+      if (missing.length > 0) return NextResponse.json({ configured: false, missing });
+      try {
+        const index = await getRsvpIndex();
+        return NextResponse.json({ configured: true, canRead: true, rowCount: index.size });
+      } catch (e) {
+        const msg = (e instanceof Error ? e.message : String(e)).slice(0, 180);
+        return NextResponse.json({ configured: true, canRead: false, error: msg });
+      }
     }
 
     const householdId = req.nextUrl.searchParams.get("householdId");
