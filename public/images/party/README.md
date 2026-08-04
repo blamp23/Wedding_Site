@@ -3,7 +3,7 @@
 Each person's headshot is named with their slug (lowercase, dashes), .png:
 
 - grace-carter.png
-- rylie-reed.png
+- rylie-reid.png
 - matthew-lamp.png
 - charlie-mitchell.png
 - jake-rose.png
