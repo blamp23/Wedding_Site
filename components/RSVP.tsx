@@ -11,6 +11,10 @@ type ExistingRsvp = { members: ExistingMember[]; dietary: string; notes: string 
 
 const allNames = households.flatMap((h) => h.members.map((m) => m.name));
 
+// White checkmark for the custom (blue) "attending" checkbox.
+const CHECK_ICON =
+  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 13l4 4L19 7'/%3E%3C/svg%3E\")";
+
 export default function RSVP() {
   const [query, setQuery] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
@@ -227,13 +231,13 @@ export default function RSVP() {
               <div className="flex gap-3">
                 <button
                   onClick={() => prefillFromExisting(existingRsvp)}
-                  className="flex-1 btn-primary bg-paper text-ink hover:bg-paper-soft"
+                  className="flex-1 inline-block px-8 py-3 bg-paper text-ink font-sans text-sm tracking-widest uppercase hover:bg-paper-soft transition-colors duration-300 cursor-pointer"
                 >
                   Update our RSVP
                 </button>
                 <button
                   onClick={reset}
-                  className="flex-1 btn-outline border-paper/40 text-paper/60 hover:text-ink hover:bg-paper hover:border-paper"
+                  className="flex-1 inline-block px-8 py-3 border border-paper/40 text-paper font-sans text-sm tracking-widest uppercase hover:bg-paper hover:text-ink transition-colors duration-300 cursor-pointer"
                 >
                   Keep as is
                 </button>
@@ -300,26 +304,35 @@ export default function RSVP() {
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
                   <Label text="Who's coming?" />
                   <div className="mt-2 divide-y divide-paper/10 border-y border-paper/10">
-                    {household.members.map((m) => (
+                    {household.members.map((m) => {
+                      const coming = attendance[m.name] ?? false;
+                      return (
                       <div key={m.name} className="py-3.5">
                         <label className="flex items-center justify-between gap-4 cursor-pointer select-none">
                           <span className="font-sans text-paper">{m.name}</span>
                           <input
                             type="checkbox"
-                            checked={attendance[m.name] ?? false}
+                            checked={coming}
                             onChange={(e) => setAttendance((a) => ({ ...a, [m.name]: e.target.checked }))}
-                            className="h-5 w-5 accent-paper cursor-pointer"
+                            className={`appearance-none h-5 w-5 rounded-sm border-2 cursor-pointer transition-colors ${
+                              coming ? "bg-blue-600 border-blue-600" : "bg-transparent border-red-500"
+                            }`}
+                            style={
+                              coming
+                                ? { backgroundImage: CHECK_ICON, backgroundSize: "72%", backgroundPosition: "center", backgroundRepeat: "no-repeat" }
+                                : undefined
+                            }
                           />
                         </label>
 
-                        {m.plusOne && attendance[m.name] && (
+                        {m.plusOne && coming && (
                           <div className="mt-3 pl-4 border-l border-paper/15 space-y-3">
                             <label className="flex items-center gap-3 cursor-pointer select-none">
                               <input
                                 type="checkbox"
                                 checked={plusOneOn[m.name] ?? false}
                                 onChange={(e) => setPlusOneOn((p) => ({ ...p, [m.name]: e.target.checked }))}
-                                className="h-4 w-4 accent-paper cursor-pointer"
+                                className="h-4 w-4 accent-blue-600 cursor-pointer"
                               />
                               <span className="font-sans text-sm text-paper/80">Bringing a guest?</span>
                             </label>
@@ -335,7 +348,8 @@ export default function RSVP() {
                           </div>
                         )}
                       </div>
-                    ))}
+                      );
+                    })}
                   </div>
                   <p className="mt-2 font-sans text-xs text-paper/40">
                     Check everyone who will attend; leave unchecked for those who can&apos;t make it.
@@ -381,7 +395,7 @@ export default function RSVP() {
                   <button
                     type="submit"
                     disabled={status === "submitting"}
-                    className="w-full btn-primary bg-paper text-ink hover:bg-paper-soft disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full inline-block px-8 py-3 bg-paper text-ink font-sans text-sm tracking-widest uppercase hover:bg-paper-soft transition-colors duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {status === "submitting" ? "Sending…" : "Submit RSVP"}
                   </button>
